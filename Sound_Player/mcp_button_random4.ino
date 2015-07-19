@@ -15,6 +15,9 @@ https://github.com/fabriceflorin/pataphysics
 About the Pataphysical Slot Machine:
 http://pataphysics.us
 
+This code requires the Arduino Library for the MCP23008 (and '9) I2C I/O expander at:
+https://github.com/adafruit/Adafruit-MCP23008-library
+
 Last updated on July 12, 2015.
 Written by Donald Day and Tim Pozar, based on free libraries from Arduino and Adafruit Industries. 
 
