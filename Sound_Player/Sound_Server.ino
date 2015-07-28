@@ -1,16 +1,33 @@
 /*************************************************** 
-  This is an example for the Adafruit VS1053 Codec Breakout
+Arduino code for playing sounds from a sound server with i2c expander and MusicMaker
+in the Wonderbox system that powers the Pataphysical Slot Machine.
 
-  Designed specifically to work with the Adafruit VS1053 Codec Breakout 
-  ----> https://www.adafruit.com/products/1381
+Wonderbox specifications:
+http://bit.ly/wonderbox-spec
 
-  Adafruit invests time and resources providing this open source code, 
-  please support Adafruit and open-source hardware by purchasing 
-  products from Adafruit!
+Wonderbox schematics:
+http://bit.ly/wonderbox-schema
 
-  Written by Limor Fried/Ladyada for Adafruit Industries.  
-  BSD license, all text above must be included in any redistribution
- ****************************************************/
+Wonderbox code repository
+https://github.com/fabriceflorin/pataphysics
+
+About the Pataphysical Slot Machine:
+http://pataphysics.us
+
+This is an example for the Adafruit VS1053 Codec Breakout
+  
+Designed specifically to work with the Adafruit VS1053 Codec Breakout 
+----> https://www.adafruit.com/products/1381
+  
+Adafruit invests time and resources providing this open source code, please support Adafruit and open-source hardware by purchasing products from Adafruit!
+  
+Written by Limor Fried/Ladyada for Adafruit Industries. Code adapted by Donald Day and Tim Pozar for the 'Pataphysical Slot Machine. 
+  
+This free software is licensed under GPLv2. The Adafruit code is licensed under BSD, all text above must be included in any redistribution.
+  
+This sketch used to be called MusicMaker_expander1.ino, before being renamed Sound_Server.ino for clarity.
+  
+****************************************************/
 
 // include SPI, MP3 and SD libraries
 #include <SPI.h>
@@ -154,5 +171,4 @@ void printDirectory(File dir, int numTabs) {
      entry.close();
    }
 }
-
 
