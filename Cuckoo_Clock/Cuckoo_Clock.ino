@@ -1,6 +1,6 @@
-/*
+/****************************************************
 
-Arduino code for Bali Cuckoo Clock, an interactive art box
+Arduino code for Bali Cuckoo Clock, an interactive art "wonderbox"
 for the Pataphysical Slot Machine.
 
 About Bali Cuckoo Clock:
@@ -12,75 +12,88 @@ http://bit.ly/wonderbox-spec
 Wonderbox schematics:
 http://bit.ly/wonderbox-schema
 
-About Pataphysical Studios:
+About the Pataphysical Slot Machine:
 http://pataphysics.us
 
+Last updated on July 28, 2015.
 
-Last updated on July 12, 2015.
-Written by Fabrice Florin, based on free libraries from Arduino and Adafruit Industries. 
+Written by Fabrice Florin, based on free libraries from Arduino and Adafruit. Sound playback code by Donald Day and Tim Pozar.
 
 This free software is licensed under GPLv2.
   
  ****************************************************/
  
- #include <Servo.h> 
+#include <Servo.h> // for controlling servo motors
+// #include <Wire.h> // to connnect with other boxes with the i2c protocol, for sound playback
+// #include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
+// Download the latest Adafruit_MCP23008 code here: https://github.com/adafruit/Adafruit-MCP23008-library
 
-Servo servo1;  // create 1st servo object (Garuda moves back and forth - HiTech HS 785HB multi-turn winch servo)  
-Servo servo2;  // create 2nd servo object (Garuda left wing)  
-Servo servo3;  // create 3rd servo object (Garuda right wing)   
-Servo servo4;  // create 4th servo object (Garuda head)  
-Servo servo5;  // create 5th servo object (left door)  
-Servo servo6;  // create 6th servo object (right door)   
+// Connect the red wire from the pataphysical bus to the VIN pin on Arduino
+// Connect the black wire from the pataphysical bus to any ground pin on Arduino
+// Connect the green wire from the pataphysical bus to Analog 5 (i2c clock) (goes to pin #1 of the expander)
+// Connect the blue wire from the pataphysical bus to Analog 4 (i2c data) (goes to pin #1 of the expander)
 
+const int box_button = 2; // the switch for the whole box is on pin 2 -- it is triggered when you open the box 
+const int temple_outside_light_left = 3; // temple left light LED is on pin 3
+const int temple_outside_light_right = 4; // temple right light LED is on pin 4
+const int temple_inside_light = 5; // temple inside light LEDs is on pin 5 
+const int garuda_front_light = 6; // garuda front light LED is on pin 6 
+const int garuda_eyes = 7; // garuda_eyes LEDs is on pin 7 
+// const int temple_back_light = n/a; // temple back light LED (rainbow) is on the 3.3V pin on Arduino
+
+Servo servo1;  // create 1st servo object (Garuda moves back and forth - HiTech HS 785HB winch servo - pin 8)  
+Servo servo2;  // create 2nd servo object (Garuda left wing - pin 9)  
+Servo servo3;  // create 3rd servo object (Garuda right wing - pin 10)
+Servo servo4;  // create 4th servo object (Garuda head - pin 11)
+Servo servo5;  // create 5th servo object (left door - pin 12)
+Servo servo6;  // create 6th servo object (right door - pin 13)
+
+int doors = 0;    // generic variable to store door positions for moving them: closed (0) to open (180) 
+int doorstatus = 0;    // generic variable to store door status for knowing when to move: closed (0) or open (1) 
 int loc = 0;    // generic variable to store Garuda's location: angle between 93 and 112 
 int dest = 0;    // generic variable to store Garuda's destination angle: front (e.g.: 93) or back (e.g.: 112)
 int dest_front = 93; // Garuda's front destination angle
 int dest_back = 112; // Garuda's back destination angle 
-int head_pos = 0;    // generic variable to store Garuda's head positions: left (0) to right (45) 
+int pos = 0;    // generic variable to store Garuda's head positions: left (0) to right (45) 
 int head_pos_left = 0;    // Garuda's left head position 
 int head_pos_right = 45;    // Garuda's right head position 
 int wing_pos = 0;    // generic variable to store Garuda's wing positions: back (0) to front (60) 
 int wing_pos_back = 0;    // Garuda's back wing position 
 int wing_pos_front = 75;    // Garuda's front wing position 
-int doors = 0;    // generic variable to store door positions for moving them: closed (0) to open (180) 
-int doorstatus = 0;    // generic variable to store door status for knowing when to move: closed (0) or open (1) 
-int garuda_wait = 0; // variable to indicate if garuda needs to wait so we can close, then open the doors
-int garuda_eyes = 7; // garuda_eyes LEDs is on pin 7 
-int garuda_front_light = 6; // garuda front light LED is on pin 6 
-int temple_back_light = 5; // temple back light LED is on pin 5
-int temple_inside_lights = 4; // temple inside lights LEDs is on pin 4 
-int temple_outside_light_1 = 3; // temple light 1 LED is on pin 3
-int temple_outside_light_2 = 2; // temple light 2 LED is on pin 2
-
+int garuda_wait = 0; // set to "1" if garuda needs to wait until someone opens the box again (which presses the button)
 
 unsigned long garuda_start;
 unsigned long garuda_time;
 unsigned long garuda_act_total_duration;
 
+int buttonState = 0;         // variable for reading the button status
+int oldbuttonState = 0;      // for tracking button changes
+int songValue = 0;           // for sound playback
+
+//********************  SET UP    **********************
 
 void setup() 
 { 
 
 Serial.begin(9600); // enables serial connection
 
-  servo1.attach(8);  // attaches the servo on pin 8 to the servo object
-  servo2.attach(9);  // attaches the servo on pin 9 to the servo object
-  servo3.attach(10);  // attaches the servo on pin 10 to the servo object 
-  servo4.attach(11);  // attaches the servo on pin 11 to the servo object 
-  servo5.attach(12);  // attaches the servo on pin 12 to the servo object 
-  servo6.attach(13);  // attaches the servo on pin 13 to the servo object 
+pinMode(box_button, INPUT);   // initialize the button's digital pin as an input. 
+pinMode(temple_outside_light_left, OUTPUT);   // initialize the left temple light's digital pin as an output. 
+pinMode(temple_outside_light_right, OUTPUT);   // initialize the right temple light's digital pin as an output. 
+pinMode(temple_inside_light, OUTPUT);   // initialize the temple inside light's digital pin as an output. 
+pinMode(garuda_front_light, OUTPUT);   // initialize Garuda front light digital pin as an output. 
+pinMode(garuda_eyes, OUTPUT);   // initialize Garuda eye lights digital pin as an output. 
 
-pinMode(garuda_eyes, OUTPUT);   // initialize Garuda eyes digital pin as an output. 
-pinMode(garuda_front_light, OUTPUT);   // initialize Garuda front light's digital pin as an output. 
-pinMode(temple_back_light, OUTPUT);   // initialize the back temple light's  digital pin as an output. 
-pinMode(temple_inside_lights, OUTPUT);   // initialize the temple inside lights' digital pin as an output. 
-pinMode(temple_outside_light_1, OUTPUT);   // initialize the right temple light's  digital pin as an output. 
-pinMode(temple_outside_light_2, OUTPUT);   // initialize the left temple light's  digital pin as an output. 
+servo1.attach(8);  // attaches the servo on pin 8 to the servo object
+servo2.attach(9);  // attaches the servo on pin 9 to the servo object
+servo3.attach(10);  // attaches the servo on pin 10 to the servo object 
+servo4.attach(11);  // attaches the servo on pin 11 to the servo object 
+servo5.attach(12);  // attaches the servo on pin 12 to the servo object 
+servo6.attach(13);  // attaches the servo on pin 13 to the servo object 
 
-  Serial.println("=== Setup");
+loc = servo1.read();
 
- loc = servo1.read();
-    
+    Serial.println("=== Setup"); // to check we're doing the right thing in setup
     Serial.print("Setup Garuda location: ");
     Serial.println(loc);
     Serial.print("Setup door status: ");
@@ -88,79 +101,147 @@ pinMode(temple_outside_light_2, OUTPUT);   // initialize the left temple light's
     Serial.print("Setup Garuda wait status: ");
     Serial.println(garuda_wait);
     Serial.println(" ");
-
-
+    
 } 
 
 
 // What we want
-// 1. Open doors
-// 2. Move forward
-// 3. Stop at front
-// 4. Garuda performs
-// 5. Move backwards
-// 6. Stop at back
+// 1. Open box (button release)
+// 2. Play sound / turn lights on
+// 3. Open doors
+// 4. Garuda moves forward
+// 5. Garuda performs (turn head, blink eyes, wings forward/back)
+// 6. Garuda moves backwards
 // 7. Close doors
+// 8. Wait for button (auick press starts step 2 again)
+// 9. Close box (long button press stops lights and music)
 
+//********************  MAIN LOOP    **********************
 
 void loop() 
 { 
   
-   Serial.println("=== Start loop");
+   Serial.println("=== Start loop");  // to check we're doing the right thing in setup
    loc = servo1.read();    
    Serial.print("Current location: ");
    Serial.println(loc);
-  
-if ( loc == dest_front )     // GARUDA IS IN THE FRONT, TELL HIM TO MOVE TO THE BACK
- {
-  Serial.println("Garuda is in the front");
+   Serial.print("Garuda wait status: ");
+   Serial.println(garuda_wait);
+   Serial.println(" ");
    
-   dest = dest_back;
+   // CHECK BUTTON: Check if the button has been pressed, and act accordingly.
+
+   buttonState = digitalRead(box_button);
+
+   Serial.print("Button State:");  // print the button state
+   Serial.println(buttonState);  // print the button state
+
+  if (garuda_wait == 1) // garuda now needs to wait until someone opens the box again (which presses the button)
+  {  
     
- }
- 
-   else  if ( loc == dest_back ) // GARUDA IS IN THE BACK, TELL HIM TO CLOSE & OPEN DOORS, THEN MOVE TO THE FRONT 
- {
+    Serial.println("Stop everything because Garuda is done.");  // explain that we're stopping because Garuda is done.
 
-   Serial.println("Garuda is in the back");
+  return;
+  }
+
+
+  if (buttonState == 1) // STOP BUTTON LOOP: if button is pressed, stop everything, send Garuda to back and close doors.
+  {  
+          
+  Serial.println("Stop everything because button is now pressed.");  // explain that we're stopping.
+ 
+     dest = dest_back;
+
+     Serial.println("Send Garuda to the back, close the doors and stop.");
+     Serial.print("Going to: ");
+     Serial.println(dest);  // tell us which direction Garuda is now going  
+  
+     servo1.write(dest);              // tell servo1 to go in the direction it’s been told (front or back)
+
+     delay(2000);
+
+     if ( loc == dest_back )     // GARUDA IS IN THE BACK, TELL HIM TO CLOSE DOORS.
+     {
    
-  closeDoors();  
-
-  delay(3000); 
-
-  openDoors();
-
-  dest = dest_front;
- }
-
-
-
-  Serial.print("Going to: ");
-  Serial.println(dest);  // tell us which direction Garuda is expected to be going  
-
+     Serial.println("Garuda is now in the back, close doors");
+   
+     closeDoors();  
+ 
+     Serial.println("Doors are now closed, stop everything.");
+     }
+   }
   
-  servo1.write(dest);              // tell servo1 to go in the direction it’s been told (front or back)
+   if (buttonState == 0) // if button is not pressed, make Garuda perform.  // STANDARD LOOP
+   { 
+    
+   Serial.println("Garuda will now perform for you");
 
+     if ( loc == dest_back )   // STANDARD LOOP 1: GARUDA IS IN THE BACK, TELL HIM TO OPEN DOORS, THEN MOVE TO THE FRONT (OR CLOSE DOORS IF HE'S DONE) 
+     {
 
-  Serial.println("Wait 2 seconds");
+     Serial.println("Garuda is in the back");
 
-  delay(2000); 
+      if (doorstatus == 0) // Doors are closed, open them and have Garuda move to front
+      {
+ 
+      openDoors();
+     
+      delay(2000); 
+   
+      dest = dest_front;
+   
+      Serial.print("Going to: ");
+      Serial.println(dest);  // tell us which direction Garuda is expected to be going  
   
-if (dest == dest_front) // If Garuda is going to the front
-{
+      servo1.write(dest);              // tell servo1 to go in the direction it’s been told (front or back)
 
-  garuda(); // START GARUDA ACT LOOP -- Garuda does his act (flaps its wings, shakes its head and sings advice) 
-  
-}
-  
+      Serial.println("Wait 2 seconds");
 
+      delay(2000); 
+ 
+      garuda(); // START GARUDA ACT LOOP -- Garuda does his act (flaps its wings, shakes its head and sings advice) 
+
+      } 
+     }
+    
+    
+     if ( loc == dest_front )     // STANDARD LOOP 2: GARUDA IS IN THE FRONT, TELL HIM TO MOVE TO THE BACK, THEN CLOSE DOORS
+     {
+
+     Serial.println("Garuda is in the front");
+   
+     dest = dest_back;
+   
+     Serial.print("Going to: ");
+     Serial.println(dest);  // tell us which direction Garuda is expected to be going  
+  
+     servo1.write(dest);              // tell servo1 to go in the direction it’s been told (front or back)
+
+     Serial.println("Wait 2 seconds");
+
+     delay(2000); 
+
+     closeDoors();
+     
+     }
+
+     if ( loc == dest_back )
+     {
+       if (doorstatus == 0)
+       {
+       garuda_wait = 1; // set to "1" because garuda now needs to wait until someone opens the box again (which presses the button)
+       }
+     }
+   }
+   
   Serial.println("=== End loop");
- 
   Serial.println(" "); // add a blank line when a new loop ends
-
-
-  } // end loop
+  
+} // END LOOP 
  
+ 
+
+//********************  GARUDA    **********************
 
 
 void garuda() 
@@ -175,7 +256,7 @@ if (dest == dest_front) // If Garuda is going to the front
  
 garuda_start = millis(); // Garuda start time
 garuda_time = 0; //  Garuda's time spent since start
-garuda_act_total_duration = 8000; // total time of the Garuda act 
+garuda_act_total_duration = 5000; // total time of the Garuda act 
  
  
   blinkTempleLightsOn();
@@ -186,35 +267,7 @@ garuda_act_total_duration = 8000; // total time of the Garuda act
 while (garuda_time <= garuda_act_total_duration)
 
 {
-  
-   for(head_pos = head_pos_right; head_pos < head_pos_left; head_pos += 1)  // GARUDA SHAKES HIS HEAD LEFT - servo 4 goes from 0 degrees to 45 degrees in steps of 1 degrees 
-  {                                  // 
-     servo4.write(head_pos);              // tell servo 4 (Garuda head) to go to position in variable 'head_pos' 
     
-     blinkEyesOn();
-     delay (30);
-     blinkEyesOff();   
-  } 
-  for(head_pos = head_pos_left; head_pos >=head_pos_right; head_pos -=1)     // GARUDA SHAKES HIS HEAD RIGHT - servo 4 goes from 45 degrees to 0 degrees in steps of 1 degrees 
-  {                                  //  
-     servo4.write(head_pos);              // tell servo 4 (Garuda head) to go to position in variable 'head_pos' 
-    
-     blinkEyesOn();
-     delay (30);
-     blinkEyesOff();   
-  }
-
-  
-  for(wing_pos = wing_pos_back; wing_pos < wing_pos_front; wing_pos += 2)  // GARUDA FLAPS HIS WINGS FORWARD - servos go from 0 degrees to 75 degrees in steps of 2 degrees 
-  {                                  // except servo 3 that goes from 65 degrees to 0 degrees 
-    servo2.write(wing_pos);              // tell servo 2 (Garuda left wing) to go to position in variable 'wing_pos' 
-    servo3.write((wing_pos_front - wing_pos));         // tell servo 3 (Garuda right wing) to go to position "75" minus variable 'wing_pos' 
-    
-     blinkEyesOn();
-     delay (50);
-     blinkEyesOff();   
-   } 
-  
   for(wing_pos = wing_pos_front; wing_pos >= wing_pos_back; wing_pos -=2)     // GARUDA FLAPS HIS WINGS BACKWARD - servos go from 75 degrees to 0 degrees in steps of 2 degrees 
   {                                  // except servo 3 that goes from 0 degrees to 65 degrees 
     servo2.write(wing_pos);              // tell servo 2 (Garuda left wing) to go to position in variable 'wing_pos'
@@ -225,27 +278,37 @@ while (garuda_time <= garuda_act_total_duration)
      blinkEyesOff();   
    }
  
+ for(wing_pos = wing_pos_back; wing_pos < wing_pos_front; wing_pos += 2)  // GARUDA FLAPS HIS WINGS FORWARD - servos go from 0 degrees to 75 degrees in steps of 2 degrees 
+  {                                  // except servo 3 that goes from 65 degrees to 0 degrees 
+    servo2.write(wing_pos);              // tell servo 2 (Garuda left wing) to go to position in variable 'wing_pos' 
+    servo3.write((wing_pos_front - wing_pos));         // tell servo 3 (Garuda right wing) to go to position "75" minus variable 'wing_pos' 
+    
+     blinkEyesOn();
+     delay (50);
+     blinkEyesOff();   
+   } 
+
   Serial.println("Garuda shakes his head"); // tell us when Garuda head shake loop is invoked
 
-   for(head_pos = head_pos_right; head_pos < head_pos_left; head_pos += 1)  // GARUDA SHAKES HIS HEAD LEFT - servo 4 goes from 0 degrees to 45 degrees in steps of 1 degrees 
-  {                                  // 
-     servo4.write(head_pos);              // tell servo 4 (Garuda head) to go to position in variable 'head_pos' 
+   for(pos = 0; pos < 60; pos += 1)  // GARUDA SHAKES HIS HEAD LEFT - servo 4 goes from 0 degrees to 45 degrees in steps of 1 degrees 
+   {                                  // 
+     servo4.write(pos);              // tell servo 4 (Garuda head) to go to position in variable 'pos' 
     
      blinkEyesOn();
      delay (30);
      blinkEyesOff();   
-  } 
-  for(head_pos = head_pos_left; head_pos >=head_pos_right; head_pos -=1)     // GARUDA SHAKES HIS HEAD RIGHT - servo 4 goes from 45 degrees to 0 degrees in steps of 1 degrees 
+   } 
+  
+  for(pos = 60; pos >=1; pos -=1)     // GARUDA SHAKES HIS HEAD RIGHT - servo 4 goes from 45 degrees to 0 degrees in steps of 1 degrees 
   {                                  //  
-     servo4.write(head_pos);              // tell servo 4 (Garuda head) to go to position in variable 'head_pos' 
+     servo4.write(pos);              // tell servo 4 (Garuda head) to go to position in variable 'pos' 
     
      blinkEyesOn();
      delay (30);
      blinkEyesOff();   
-  }
+   }
 
  
-  
 garuda_time = millis() - garuda_start; //  Garuda's time spent since start
 
 //Serial.println(garuda_time); // tell how much time Garuda has used so far
@@ -278,6 +341,9 @@ Serial.println(garuda_time); // tell how much time Garuda has used so far
 } // end garuda()
 
 
+//********************  DOORS    **********************
+
+
 void openDoors()
 
 {
@@ -305,8 +371,8 @@ doorstatus = 1;
 
 garuda_wait = 0;
 
-Serial.print("New Garuda is done waiting, ready to go out.");
-
+Serial.print("New Garuda is done waiting, ready to go out: ");
+Serial.println(garuda_wait);
 
 // Serial.println("Status:");
 // Serial.println(doorstatus);
@@ -341,26 +407,27 @@ doorstatus = 0;
 
 garuda_wait = 1;
 
-
-// Serial.println("Status:");
-// Serial.println(doorstatus);
+Serial.print("Garudo is behind the doors, needs to wait: ");
+Serial.println(garuda_wait);
 
 }
   
 } // endcloseDoors()
 
 
+//********************  LIGHTS    **********************
+
 
 void blinkEyesOn()
 {
   digitalWrite(garuda_eyes, HIGH);   // turn the LED on (HIGH is the voltage level)
-} // end blinkEyesOn()
+} // end blinkEyesOn
 
 
 void blinkEyesOff()
 {
  digitalWrite(garuda_eyes, LOW);    // turn the LED off by making the voltage LOW
-} // end blinkEyesOff()
+} // end blinkEyesOff
 
 
 void blinkFrontLightOn()
@@ -368,36 +435,37 @@ void blinkFrontLightOn()
   digitalWrite(garuda_front_light, HIGH);   // turn the LED on (HIGH is the voltage level)
   Serial.println("Garudo front light is on");
   
-} // end blinkEyesOn()
+} // end blinkEyesOn
 
 
 void blinkFrontLightOff()
 {
  digitalWrite(garuda_front_light, LOW);    // turn the LED off by making the voltage LOW
    Serial.println("Garudo front light is off");
-} // end blinkEyesOff()
+} // end blinkEyesOff
 
 void blinkInsideLightsOn()
 {
-  digitalWrite(temple_inside_lights, HIGH);   // turn the LED on (HIGH is the voltage level)
-} // blinkInsideLightsOn()
+  digitalWrite(temple_inside_light, HIGH);   // turn the LED on (HIGH is the voltage level)
+} // blinkInsideLightsOn
 
 
 void blinkInsideLightsOff()
 {
- digitalWrite(temple_inside_lights, LOW);    // turn the LED off by making the voltage LOW
-} // end blinkInsideLightsOff()
+ digitalWrite(temple_inside_light, LOW);    // turn the LED off by making the voltage LOW
+} // end blinkInsideLightsOff
 
 
 void blinkTempleLightsOn()
 {
-  digitalWrite(temple_outside_light_1, HIGH);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(temple_outside_light_2, HIGH);   // turn the LED on (HIGH is the voltage level)
-} // end blinkTempleLightsOn()
+  digitalWrite(temple_outside_light_left, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(temple_outside_light_right, HIGH);   // turn the LED on (HIGH is the voltage level)
+} // end blinkTempleLightsOn
 
 
 void blinkTempleLightsOff()
 {
- digitalWrite(temple_outside_light_1, LOW);    // turn the LED off by making the voltage LOW
- digitalWrite(temple_outside_light_2, LOW);    // turn the LED off by making the voltage LOW
-} // end blinkTempleLightsOff()
+ digitalWrite(temple_outside_light_left, LOW);    // turn the LED off by making the voltage LOW
+ digitalWrite(temple_outside_light_right, LOW);    // turn the LED off by making the voltage LOW
+} // end blinkTempleLightsOff
+
