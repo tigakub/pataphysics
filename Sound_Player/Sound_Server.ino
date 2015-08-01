@@ -131,7 +131,7 @@ void loop() {
         musicPlayer.stopPlaying();    
      // Let's build a new file name to play...        
         trackname = "TRK";
-        trackname += "000";
+     //   trackname += "000";  new filename format with no leading zeroes
         trackname += String(I2Cvalue);
         trackname += ".MP3";
         // The startPlayingFile function wants a char array...
