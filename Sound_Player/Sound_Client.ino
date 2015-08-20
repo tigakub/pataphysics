@@ -61,7 +61,8 @@ int oldbuttonState = 0;      // for button changes
 int songValue = 0;
   
 void setup() {  
-  pinMode(buttonPin, INPUT_PULLUP);
+  // pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(buttonPin, INPUT);
   mcp.begin();      // use default address 0, based at 0x20
 for (int i=0; i<8; i++) {
   mcp.pinMode(i, OUTPUT);  //all 8 pins output
@@ -70,7 +71,7 @@ for (int i=0; i<8; i++) {
 
 
 void loop() {
-  songValue = random(4);
+  songValue = 2;  // Play Track 2 (Box #)
   oldbuttonState = buttonState;
   buttonState = digitalRead(buttonPin);
   // check if the pushbutton is pressed.
