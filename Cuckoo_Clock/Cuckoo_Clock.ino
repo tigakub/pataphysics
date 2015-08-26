@@ -15,7 +15,7 @@ http://bit.ly/wonderbox-schema
 About the Pataphysical Slot Machine:
 http://pataphysics.us
 
-Last updated on July 31, 2015.
+Last updated on August 25, 2015.
 
 Written by Fabrice Florin, based on free libraries from Arduino and Adafruit. Sound playback code by Donald Day and Tim Pozar.
 
@@ -24,14 +24,16 @@ This free software is licensed under GPLv2.
  ****************************************************/
  
 #include <Servo.h> // for controlling servo motors
-// #include <Wire.h> // to connnect with other boxes with the i2c protocol, for sound playback
-// #include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
+//#include <Wire.h> // to connnect with other boxes with the i2c protocol, for sound playback
+//#include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
 // Download the latest Adafruit_MCP23008 code here: https://github.com/adafruit/Adafruit-MCP23008-library
 
-// Connect the red wire from the pataphysical bus to the VIN pin on Arduino
+// Connect the red wire from the pataphysical bus to the 5V pin on Arduino
 // Connect the black wire from the pataphysical bus to any ground pin on Arduino
-// Connect the green wire from the pataphysical bus to Analog 5 (i2c clock) (goes to pin #1 of the expander)
-// Connect the blue wire from the pataphysical bus to Analog 4 (i2c data) (goes to pin #1 of the expander)
+// Connect the green wire from the pataphysical bus to Analog 5 (i2c clock) 
+// Connect the blue wire from the pataphysical bus to Analog 4 (i2c data) 
+
+//Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
 
 const int box_button = 2; // the switch for the whole box is on pin 2 -- it is triggered when you open the box 
 const int temple_outside_light_left = 3; // temple left light LED is on pin 3
@@ -108,16 +110,36 @@ Serial.println(garudaState);
 
 Serial.println(" ");
     
-    //  mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
-    //  for (int i=0; i<8; i++) {
-    //  mcp.pinMode(i, OUTPUT);  //all 8 pins output
-    //  }
     
+// mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
+
+//
+// for (int i=0; i<8; i++) 
+// {
+// mcp.pinMode(i, OUTPUT);  //all 8 pins output
+// }   
     
 } 
 
 
 //********************  MAIN LOOP    **********************
+
+/* Sequence of loop events:
+0. Garuda sleeps (default state)
+1. Open box (button release)
+2. Play sound / turn lights on
+3. Open doors
+4. Garuda moves forward
+5. Garuda performs (turn head, blink eyes, wings forward/back)
+6. Garuda moves backwards
+7. Close doors
+8. Wait for button (if you want to restart this sequence)
+9. Close box (button is pressed, which puts Garuda back to sleep)
+
+Notes: Each of the numbers above corresponds to a different state, tracked by the garudaState variable.
+Any button press can change this sequence, see buttonCheck() function below.
+*/
+
 
 void loop() 
 { 
@@ -150,6 +172,8 @@ void loop()
      { 
        
      turnTempleLightsOn();
+     
+     flapWingsBackward();  
    
      // playSound() ; // This will play the sound, when the code is ready.
 
@@ -159,8 +183,6 @@ void loop()
          if (doorstatus == 0) // Doors are closed, open them and have Garuda move to front
          {
  
-         flapWingsBackward();  
-    
          openDoors();
    
          turnFrontLightOn();
@@ -192,23 +214,6 @@ void loop()
   
 } // END LOOP 
  
- 
-/* Sequence of events:
-0. Garuda sleeps (default state)
-1. Open box (button release)
-2. Play sound / turn lights on
-3. Open doors
-4. Garuda moves forward
-5. Garuda performs (turn head, blink eyes, wings forward/back)
-6. Garuda moves backwards
-7. Close doors
-8. Wait for button (if you want to restart this sequence)
-9. Close box (button is pressed, which puts Garuda back to sleep)
-
-Notes: Each of the numbers above corresponds to a different state, tracked by the garudaState variable.
-Any button press can change this sequence, see buttonCheck() function below.
-*/
-
 
 //********************  BUTTON CHECK    **********************
 
@@ -259,8 +264,10 @@ void buttonCheck() // CHECK BUTTON: Check if the button has been pressed, and re
           
       Serial.println("Stop everything because button was pressed during the main sequence.");  // explain why we're stopping.
 
+      blinkTempleLights();
+
       moveBackward();
- 
+  
       turnFrontLightOff();
 
       closeDoors();
@@ -286,12 +293,19 @@ void buttonCheck() // CHECK BUTTON: Check if the button has been pressed, and re
       
         Serial.println("Garuda is ready to RE-START (garudaState = 1).");  // Confirm that Garuda is ready to RE-START
         Serial.println(" "); // add blank line
+        
+        blinkTempleLights();
+        delay(100);
+        blinkTempleLights();
    
         }
         else if (buttonState == HIGH && garudaState == 8 )  // the button is still pressed (was not released to re-start), so we assume the box is now closed.
         {
         garudaState = 0; // Garuda is now going to sleep
       
+          
+      turnTempleLightsOff();
+
         Serial.println("Garuda is now going to sleep (garudaState = 0).");  // Confirm that Garuda is now going to sleep
         Serial.println(" "); // add blank line
          
@@ -312,19 +326,20 @@ void buttonCheck() // CHECK BUTTON: Check if the button has been pressed, and re
 
 //********************  PLAY SOUND    **********************
 
-// void playSound() // PLAY SOUND: This will play a sound when the code is ready. Now commenting it out.
-// {
+void playSound() // PLAY SOUND: This will play a sound, if all goes well, using the i2c expander, for sound playback
+
+  {
   
-// mcp.writeGPIO(songValue);
-
+  // mcp.writeGPIO(12); // ask the sound server to play the sound file for the Bali Cuckoo Clock.
+  // The file name is actually 'TRK12.MP3', but we're only sending the song value '4', the sound server will fill in 'TRK' and '.mp3' for us.
   
-//  garudaState = 2;
+  garudaState = 2;
 
-//  Serial.print("We are now playing the sound. (garudaState is 2).");
-//  Serial.println(" ");
+  Serial.print("We are now playing the sound. (garudaState is 2).");
+  Serial.println(" ");
 
 
-// } // end playSound
+  } // end playSound
 
 
 //********************  LOCATION CHECK    **********************
@@ -439,11 +454,11 @@ void garudaActions() // Garuda does his act (flaps its wings, shakes its head an
     flapWingsForward();
     
     flapWingsBackward();
-    
+   
     shakeHeadLeft();
 
     shakeHeadRight();
-   
+
     garuda_time = millis() - garuda_start; //  Garuda's time spent since start
 
     } //end while
@@ -471,7 +486,7 @@ void shakeHeadLeft()
 
   servo4.attach(11);  // attaches the servo on pin 11 to the servo object that makes Garuda's head shake
 
-  for(pos = 0; pos < 60; pos += 1)  // GARUDA SHAKES HIS HEAD LEFT - servo 4 goes from 0 degrees to 60 degrees in steps of 1 degrees 
+  for(pos = 0; pos < 60; pos += 2)  // GARUDA SHAKES HIS HEAD LEFT - servo 4 goes from 0 degrees to 60 degrees in steps of 1 degrees 
    {                                  // 
      servo4.write(pos);              // tell servo 4 (Garuda head) to go to position in variable 'pos' 
 
@@ -489,7 +504,7 @@ void shakeHeadRight()
 
  servo4.attach(11);  // attaches the servo on pin 11 to the servo object that makes Garuda's head shake
 
-  for(pos = 60; pos >=1; pos -=1)     // GARUDA SHAKES HIS HEAD RIGHT - servo 4 goes from 45 degrees to 0 degrees in steps of 1 degrees 
+  for(pos = 60; pos >=1; pos -=2)     // GARUDA SHAKES HIS HEAD RIGHT - servo 4 goes from 60 degrees to 0 degrees in steps of 1 degrees 
   {                                  //  
      servo4.write(pos);              // tell servo 4 (Garuda head) to go to position in variable 'pos' 
     
@@ -620,6 +635,21 @@ void closeDoors()
 
 
 //********************  LIGHTS    **********************
+
+
+void blinkTempleLights()
+{ 
+    
+     turnFrontLightOn();
+     delay (50);
+     turnFrontLightOff();   
+     delay (50);   
+     turnFrontLightOn();
+     delay (50);
+     turnFrontLightOff();   
+
+} // end blinkTempleLights
+
 
 void blinkEyes()
 { 
