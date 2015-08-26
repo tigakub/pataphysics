@@ -58,9 +58,9 @@ Adafruit_MCP23008 mcp;
 const int buttonPin = 12;     // the number of the pushbutton pin
 int buttonState = 0;         // variable for reading the pushbutton status
 int oldbuttonState = 0;      // for button changes
-int songValue = 0;    // replace this with the track number of the box requesting the sound (see tracks list URL below) 
+int songValue = 26;  // Play Track 26 (Box #26)
 int quietValue = 0;  // TRK0 means stop playing
- 
+  
  // Pataphysical Tracks List:
  // http://bit.ly/pata-tracks-list
  
@@ -83,7 +83,7 @@ void loop() {
   if (buttonState != oldbuttonState) {     
     if (buttonState == HIGH) {     
 //    mcp.begin();      // use default address 0, based at 0x20
-      mcp.writeGPIO(songValue); // this will get the sound server to play the track number specified in songValue
+      mcp.writeGPIO(songValue);
     }
     else {
       mcp.writeGPIO(quietValue);
