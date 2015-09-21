@@ -1,14 +1,21 @@
-
-
 /****************************************************
 
 Arduino code for X-Ray Skull, an interactive art "wonderbox"
 for the Pataphysical Slot Machine.
 
+This software module controls the skull's sound and motion, 
+using an Arduino Uno with  Servo, Wire and Adafruit_MCP23008 libraries.
+
+A separate software module controls the skull's eye lights, 
+using an Arduino Uno.
+
 About the Pataphysical Slot Machine:
 http://pataphysics.us
 
-Last updated on September 20, 2015.
+Wonderbox specifications:
+http://bit.ly/wonderbox-spec
+
+Last updated on September 21, 2015.
 
 Written by Jean Bolte, with help from Donald Day and Fabrice Florin, 
 based on free libraries from Arduino, Adafruit and Barraganstudio.com. 
