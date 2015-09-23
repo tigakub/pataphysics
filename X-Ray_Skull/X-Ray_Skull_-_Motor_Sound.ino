@@ -37,7 +37,7 @@ This free software is licensed under GPLv2.
 
 Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
 
-const int box_button = 12; // the switch for the whole box is on pin 2 -- it is triggered when you open the box 
+const int box_button = 12; // the switch for the whole box may be placed on pin 12 -- it is triggered when you open the box. 
 
 Servo myservo;  // create servo object to control a servo 
                 // a maximum of eight servo objects can be created 
@@ -46,7 +46,7 @@ int pos = 0;    // variable to store the servo position
 
 
 int SoundPlaybackState = 0; // set to "0" by default, so the sound will play the first time.
-int songValue = 28;  // Play Track 28 (Box #28), see tracks list below
+int songValue = 28;  // Play Track 28 (Box #28), the X-Ray Skull
 int quietValue = 0;  // TRK0 means stop playing
 
 
