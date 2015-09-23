@@ -14,8 +14,8 @@ http://bit.ly/wonderbox-spec
 
 Last updated on September 22, 2015.
 
-Written by Fabrice Florin and Freddy Hahne, 
-based on free libraries from Arduino, Adafruit and others. 
+Written by Fabrice Florin, Freddy Hahne and Tim Pozar. 
+Based on free libraries from Arduino, Adafruit and others. 
 Sound playback code by Donald Day and Tim Pozar.
 
 This free software is licensed under GPLv2.
