@@ -44,8 +44,6 @@ int quietValue = 0;  // TRK0 means stop playing
 const int led_1 = 10; // LED group 1 is on pin 10
 const int led_2 = 11; // LED group 2 is on pin 11
 
-
-
 //********************  SETUP    **********************
 
 void setup() 
@@ -62,17 +60,13 @@ mcp.begin();      // use default address 0, based at 0x20 // This setup routine 
 //   mcp.pinMode(i, OUTPUT);  //all 8 pins output
 // }   
     
-} 
-
+}
 
 //********************  MAIN LOOP    **********************
 
- 
 void loop() 
 { 
- 
   // First ask the server to play a sound if the button has been pressed.
-  
   oldbuttonState = buttonState;
   buttonState = digitalRead(box_button);
   // check if the pushbutton is pressed.
@@ -81,7 +75,6 @@ void loop()
   {     
     if (buttonState == HIGH) 
     {     
-      
       mcp.writeGPIO(songValue);
     }
     else 
@@ -91,19 +84,13 @@ void loop()
   }
   oldbuttonState = buttonState;
   delay(20);
- 
 
 // Then make the two groups of LEDs blink on and off -- feel free to tweak the timing as needed 
  
   digitalWrite(led_1, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);               // wait for a second
   digitalWrite(led_2, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);               // wait for a second
-  digitalWrite(led_2, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);               // wait for a second
-  digitalWrite(led_1, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);               // wait for a second
-    
- 
+  delay(1000);                 // wait for a second
+  digitalWrite(led_1, LOW);    // turn the LED off (LOW is the voltage level)
+  digitalWrite(led_2, HIGH);   // turn the LED on by making the voltage HIGH
+  delay(1000);                 // wait for a second
 }
-
