@@ -4,7 +4,7 @@ Arduino code for the Ha Ha box, an interactive art "wonderbox"
 for the Pataphysical Slot Machine.
 
 This software module controls the lights and sounds for that box, 
-using an Arduino Uno with  Servo, Wire and Adafruit_MCP23008 libraries.
+using an Arduino Uno with Servo, Wire and Adafruit_MCP23008 libraries.
 
 About the Pataphysical Slot Machine:
 http://pataphysics.us
@@ -48,18 +48,16 @@ const int led_2 = 11; // LED group 2 is on pin 11
 
 void setup() 
 { 
-
   // initialize the digital pin as an output.
   pinMode(led_1, OUTPUT);     
   pinMode(led_2, OUTPUT);   
   
-mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
+  mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
 
 // for (int i=0; i<8; i++) // commenting out the server initialization
 // {
 //   mcp.pinMode(i, OUTPUT);  //all 8 pins output
 // }   
-    
 }
 
 //********************  MAIN LOOP    **********************
@@ -86,11 +84,10 @@ void loop()
   delay(20);
 
 // Then make the two groups of LEDs blink on and off -- feel free to tweak the timing as needed 
- 
   digitalWrite(led_1, HIGH);   // turn the LED on (HIGH is the voltage level)
   digitalWrite(led_2, LOW);    // turn the LED off by making the voltage LOW
-  delay(300);                 // wait for a second
+  delay(300);                  // wait for a second
   digitalWrite(led_1, LOW);    // turn the LED off (LOW is the voltage level)
   digitalWrite(led_2, HIGH);   // turn the LED on by making the voltage HIGH
-  delay(300);                 // wait for a second
+  delay(300);                  // wait for a second
 }
