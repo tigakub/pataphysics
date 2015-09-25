@@ -76,7 +76,7 @@ void loop()
   // if it is, the buttonState is HIGH, nc button:
   if (buttonState != oldbuttonState) 
   {     
-    if (buttonState == HIGH) 
+    if (buttonState == LOW) 
     {     
       
   // Play a sound, since the button has been pressed.    
@@ -84,21 +84,21 @@ void loop()
   mcp.writeGPIO(songValue);
       
    // Then make the three groups of LEDs blink on and off -- feel free to tweak the timing as needed 
- 
-  digitalWrite(led, HIGH);   // turn the LED on (HIGH is the voltage level)
-      
+       
    }
     else 
     {
       
     mcp.writeGPIO(quietValue);
 
-  digitalWrite(led, LOW);    // turn the LED off by making the voltage LOW
-
-   }
+    }
   }
   oldbuttonState = buttonState;
   delay(20);
+ 
+ digitalWrite(led, HIGH);    // turn the LED off by making the voltage LOW
+  // delay(1000);   
+
  
 }
 

@@ -88,37 +88,24 @@ void loop()
   mcp.writeGPIO(songValue);
       
    // Then make the three groups of LEDs blink on and off -- feel free to tweak the timing as needed 
- 
-  digitalWrite(led_1, HIGH);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(led_2, HIGH);    // turn the LED off by making the voltage LOW
-  digitalWrite(led_3, HIGH);    // turn the LED off by making the voltage LOW
-  delay(1000);               // wait for a second
-
-  digitalWrite(led_1, LOW);    // turn the LED off by making the voltage LOW
-  digitalWrite(led_2, LOW);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(led_3, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);               // wait for a second
- 
-  digitalWrite(led_1, HIGH);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(led_2, HIGH);    // turn the LED off by making the voltage LOW
-  digitalWrite(led_3, HIGH);    // turn the LED off by making the voltage LOW
-  delay(1000);               // wait for a second
-      
+  
    }
     else 
     {
       
     mcp.writeGPIO(quietValue);
 
-  digitalWrite(led_1, LOW);    // turn the LED off by making the voltage LOW
-  digitalWrite(led_2, LOW);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(led_3, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);               // wait for a second
-
    }
   }
+ 
   oldbuttonState = buttonState;
   delay(20);
  
+  digitalWrite(led_1, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(led_2, HIGH);    // turn the LED off by making the voltage LOW
+  digitalWrite(led_3, HIGH);    // turn the LED off by making the voltage LOW
+  delay(1000);               // wait for a second
+      
+
 }
 
