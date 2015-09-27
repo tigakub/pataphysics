@@ -65,20 +65,9 @@ int tracknum = 1;
 
 void setup() {
   Serial.begin(9600);
-  // make connections from the I2C expander inputs:
-  pinMode(A2, INPUT);
-  pinMode(A3, INPUT);
-  pinMode(A4, INPUT);
-  pinMode(A5, INPUT);
-  pinMode(2, INPUT);
-  pinMode(5, INPUT);
-  pinMode(8, INPUT);
-  pinMode(9, INPUT);
   
-  Serial.println("Adafruit VS1053 Library Test");
-
+  Serial.println("Initialize I2C hardware receiver");
   // Initialize the I2C chip...
-
   mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
 
   for (int i=0; i<8; i++) // commenting out the server initialization
@@ -87,7 +76,6 @@ void setup() {
    }       
 
   Serial.println("Adafruit VS1053 Library Test");
-
   // initialise the music player
   if (! musicPlayer.begin()) { // initialise the music player
      Serial.println(F("Couldn't find VS1053, do you have the right pins defined?"));
@@ -122,13 +110,23 @@ void setup() {
   // *** This method is preferred
   if (! musicPlayer.useInterrupt(VS1053_FILEPLAYER_PIN_INT))
     Serial.println(F("DREQ pin is not an interrupt pin"));
-}
+    
+// pin config for I2C hardware receiver    
+  pinMode(A2, INPUT);
+  pinMode(A3, INPUT);
+  pinMode(A1, INPUT); //changed for I2C compatibility
+  pinMode(A0, INPUT); //changed for I2C compatibility
+  pinMode(2, INPUT);
+  pinMode(5, INPUT);
+  pinMode(8, INPUT);
+  pinMode(9, INPUT);
+ }
 
 void loop() {
       oldI2Cvalue = I2Cvalue;  
   // read the I2C expander pins:
-      I2Cvalue = digitalRead(A5);
-      I2Cvalue += (digitalRead(A4) << 1);
+      I2Cvalue = digitalRead(A1);         //changed for I2C compatibility
+      I2Cvalue += (digitalRead(A0) << 1); //changed for I2C compatibility
       I2Cvalue += (digitalRead(A3) << 2);
       I2Cvalue += (digitalRead(A2) << 3);
       I2Cvalue += (digitalRead(2) << 4);
