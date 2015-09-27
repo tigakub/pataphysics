@@ -69,11 +69,9 @@ void setup() {
   // pinMode(buttonPin, INPUT_PULLUP);
   pinMode(buttonPin, INPUT);
   mcp.begin();      // use default address 0, based at 0x20
-for (int i=0; i<8; i++) {
-  mcp.pinMode(i, OUTPUT);  //all 8 pins output
+  for (int i=0; i<8; i++) {
+    mcp.pinMode(i, OUTPUT);  //all 8 pins output
   }
-}
-
 
 void loop() {
   oldbuttonState = buttonState;
