@@ -1,5 +1,5 @@
 /****************************************************
-Arduino code for the Ha Ha box, an interactive art "wonderbox"
+Arduino code for the Ubu Roi Stage box, an interactive art "wonderbox"
 for the Pataphysical Slot Machine.
 This software module controls the lights and sounds for that box, 
 using an Arduino Uno with  Servo, Wire and Adafruit_MCP23008 libraries.
@@ -8,9 +8,9 @@ http://pataphysics.us
 Wonderbox specifications:
 http://bit.ly/wonderbox-spec
 Last updated on September 22, 2015.
-Written by Fabrice Florin and Freddy Hahne, 
+Written by Fabrice Florin, Freddy Hahne Donald Day and Tim Pozar
 based on free libraries from Arduino, Adafruit and others. 
-Sound playback code by Donald Day and Tim Pozar.
+Sound server playback code by Donald Day and Tim Pozar.
 This free software is licensed under GPLv2.
   
  ****************************************************/
