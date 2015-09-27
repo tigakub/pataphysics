@@ -1,19 +1,14 @@
 /*************************************************** 
 Arduino code for playing sounds from a sound server with i2c expander and MusicMaker
 in the Wonderbox system that powers the Pataphysical Slot Machine.
-
 Wonderbox specifications:
 http://bit.ly/wonderbox-spec
-
 Wonderbox schematics:
 http://bit.ly/wonderbox-schema
-
 Wonderbox code repository
 https://github.com/fabriceflorin/pataphysics
-
 About the Pataphysical Slot Machine:
 http://pataphysics.us
-
 This is an example for the Adafruit VS1053 Codec Breakout
   
 Designed specifically to work with the Adafruit VS1053 Codec Breakout 
@@ -33,12 +28,15 @@ This sketch used to be called MusicMaker_expander1.ino, before being renamed Sou
 #include <SPI.h>
 #include <Adafruit_VS1053.h>
 #include <SD.h>
+#include <Adafruit_MCP23008.h>
+
+Adafruit_MCP23008 mcp;
+
 String trackname = ""; 
 
 // Pin 13 has an LED connected on most Arduino boards.
 // give it a name:
 int led = 13;
-
 
 // These are the pins used for the breakout example
 #define BREAKOUT_RESET  9      // VS1053 reset pin (output)
@@ -59,7 +57,6 @@ Adafruit_VS1053_FilePlayer musicPlayer =
   //Adafruit_VS1053_FilePlayer(BREAKOUT_RESET, BREAKOUT_CS, BREAKOUT_DCS, DREQ, CARDCS);
   // create shield-example object!
   Adafruit_VS1053_FilePlayer(SHIELD_RESET, SHIELD_CS, SHIELD_DCS, DREQ, CARDCS);
-
 
 int I2Cvalue = 0;
 int oldI2Cvalue = 0;
@@ -87,7 +84,6 @@ void setup() {
    {
      mcp.pinMode(i, OUTPUT);  //all 8 pins output
    }       
-  }
 
   Serial.println("Adafruit VS1053 Library Test");
 
@@ -183,4 +179,3 @@ void printDirectory(File dir, int numTabs) {
      entry.close();
    }
 }
-
