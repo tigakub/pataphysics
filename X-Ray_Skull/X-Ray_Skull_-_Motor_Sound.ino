@@ -55,20 +55,14 @@ int quietValue = 0;  // TRK0 means stop playing
 void setup() 
 { 
 
-  myservo.attach(9);  // attaches the servo on pin 9 to the servo object 
+mcp.begin();      // use default address 0, based at 0x20 
+// don't initialize I2C hardware ceiver here} 
+delay(5000);  //wait 5 seconds after power up before doing anything else
 
-  
+myservo.attach(9);  // attaches the servo on pin 9 to the servo object 
+
 Serial.begin(9600); // enables serial connection
     
-    
-mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
-
-for (int i=0; i<8; i++) 
- {
-   mcp.pinMode(i, OUTPUT);  //all 8 pins output
- }   
-    
-} 
 
 
 //********************  MAIN LOOP    **********************
