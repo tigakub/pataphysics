@@ -39,7 +39,7 @@ int quietValue = 0;  // TRK0 means stop playing
 void setup() 
 { 
   // Wait for 10mS * box number value to try to avoid collision with other boxes doing this same thing.
-  delay(10*songValue);
+  delay(100*songValue);
   // initialize the digital pin as an output. 
   
 mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
