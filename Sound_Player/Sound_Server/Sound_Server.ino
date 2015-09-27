@@ -28,6 +28,7 @@ This sketch used to be called MusicMaker_expander1.ino, before being renamed Sou
 #include <SPI.h>
 #include <Adafruit_VS1053.h>
 #include <SD.h>
+#include <Wire.h>
 #include <Adafruit_MCP23008.h>
 
 Adafruit_MCP23008 mcp;
