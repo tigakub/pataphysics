@@ -12,7 +12,7 @@ http://bit.ly/wonderbox-schema
 About the Pataphysical Slot Machine:
 http://pataphysics.us
 
-Last updated on September 21, 2015.
+Last updated on September 25, 2015.
 
 Written by Fabrice Florin, based on free libraries from Arduino and Adafruit, with guidance by Donald Day.
 
@@ -23,7 +23,7 @@ It includes code for the Adafruit Motor Shield v2, which we are using for this w
 
 This sketch creates a fun motor party on your desk, driving DC motors, Servo and Step Motors all at once.
 
-It also includes code from the Adafruit_MCP23008 library for eventual sound playback (nmow commented out):
+It also includes code from the Adafruit_MCP23008 library for eventual sound playback (now commented out):
 
 https://github.com/adafruit/Adafruit-MCP23008-library
 
@@ -61,8 +61,8 @@ int ubuState = 0; // set to "0" if Ubu is asleep. He needs to wait until someone
 
 const int outside_light_left = 3; // temple left light LED is on pin 3
 const int outside_light_right = 4; // temple right light LED is on pin 4
-const int inside_light = 5; // temple inside light LEDs is on pin 5
-const int front_light = 6; // ubu front light LED is on pin 6
+const int front_light = 5; // ubu front light LED is on pin 5
+const int inside_light = 6; // temple inside light LEDs is on pin 6
 const int ubu_eyes = 7; // ubu_eyes LEDs is on pin 7
 int pos = 0;    // generic variable to store Ubu's head positions: left (0) to right (45)
 
@@ -101,6 +101,8 @@ void setup()
   myMotor->setSpeed(200);
   myMotor->run(RELEASE);
 
+    servo1.write(30);              // tell servo 4 (Ubu head) to go to position in variable 'pos'
+
 
   // mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
 
@@ -116,9 +118,9 @@ void setup()
 
 
 /* Sequence of loop events:
-0. Ubu sleeps (default state)
-1. Button is clicked, turn lights on
-2. Play sound
+0. Ubu sleeps (default state, lights are on)
+1. Button is clicked
+2. Play sound (eventually)
 3. Spin wheel forward (DC motor)
 4. Ubu wakes up, shakes his head (blink eyes, servo turns left and right)
 5. Spiral gidouille spins backward, then stops
@@ -127,8 +129,6 @@ void setup()
 Notes: Each of the numbers above corresponds to a different state, tracked by the ubuState variable.
 Any button press can change this sequence, see buttonCheck() function below.
 
-I borrowed a lot of that code from the Bali Cuckoo Clock, so the Ubu is now going through 7 different stages on his path to redemption.
-The goal is to separate out some of these functions so they don’t all happen at once, as loosely tracked by the ubuState variable.
 */
 
 
@@ -143,7 +143,9 @@ void loop()
 
   if (ubuState == 0) // Ubu is asleep. He is waiting for someone to open the box (which releases the button)
   {
-
+    
+    turnInsideLightsOn();
+    
     buttonCheck(); // check to see if the button is pressed or released
 
     Serial.println("Ubu is sleeping. He is waiting for a button release (ubuState is 0).");  // explain that we're stopped because Ubu is asleep.
@@ -153,9 +155,9 @@ void loop()
   if (ubuState == 6) // Ubu is done, waiting for someone to press and release the button.
   {
 
-    buttonCheck(); // check to see if the button is pressed AND released
+    buttonCheck(); // check to see if the button is pressed or released
 
-    Serial.println("Ubu is done, waiting for someone to press and release the button (ubuState is 7).");  // explain that we're waiting because Ubu is done.
+    Serial.println("Ubu is done, waiting for someone to press and release the button (ubuState is 6).");  // explain that we're waiting because Ubu is done.
 
   }
 
@@ -167,7 +169,7 @@ void loop()
   }
 
 
-  if (ubuState == 2)  // if the lights are turned in, play sound (eventually)
+  if (ubuState == 2)  // Once the lights are turned on, play sound (eventually)
   {
 
     // playSound() ; // This will play the sound, when the code is ready.
@@ -199,10 +201,10 @@ void loop()
 
   }
 
-  if (ubuState == 6) // Ubu is done, time to put him to sleep, turn off some lights
+  if (ubuState == 6) // Ubu is done, time to put him to sleep, wait for a button click.
   {
 
-    turnInsideLightsOff();
+    // turnInsideLightsOff();
 
   }
 
@@ -230,7 +232,7 @@ void buttonCheck() // CHECK BUTTON: Check if the button has been pressed, and re
 
   buttonState = digitalRead(box_button);
 
-  if (buttonState == LOW && ubuState == 0 )  // if button was released by opening the box while Ubu was sleeping, make him start his act.  // STANDARD LOOP
+  if (buttonState == LOW && ubuState == 0 )  // if button was released while Ubu was sleeping, make him start his act.  // STANDARD LOOP
   {
 
     ubuState = 1; // Ubu is ready to START
@@ -253,13 +255,12 @@ void buttonCheck() // CHECK BUTTON: Check if the button has been pressed, and re
     Serial.println(ubuState);  // print the button state
     Serial.println(" "); // add blank line
 
-    // Check if the button has been pressed or released.
-    // If it has been pressed, the button state should be HIGH (for a Normally Open button set as Input with a Pullup resistor).
-    // If it has been released, the button state should be LOW (for a Normally Open button set as Input with a Pullup resistor).
+    blinkLights(); // to confirm that the button state has changed.
+
     // Next, we will determine what action should take place, based on Ubu's state (tracked in ubuState).
 
-    if (buttonState == HIGH && ubuState >= 2 && ubuState <= 6) // STOP BUTTON LOOP: if button is pressed during main sequence, stop everything, put Ubu to sleep and stop spinning wheel.
-    {
+    if (buttonState == LOW && ubuState >= 2 && ubuState <= 7) // STOP BUTTON LOOP: if button is pressed during main sequence, stop everything, put Ubu to sleep and stop spinning wheel.
+     {
 
       Serial.println("Stop everything because button was pressed during the main sequence.");  // explain why we're stopping.
 
@@ -276,48 +277,31 @@ void buttonCheck() // CHECK BUTTON: Check if the button has been pressed, and re
       delay(2000); // wait a couple seconds for the button to be released, so it doesn't trigger the sequence again
 
       return;
-
-    }
-    else if (buttonState == HIGH && ubuState == 6 )  // if button was pressed after Ubu's sequence ends, check to see if it's released to re-start it, or pressed after closing the box.
-    {
+     }
+     else if (buttonState == HIGH && ubuState == 6 )  // if button was pressed after Ubu's sequence ends, check to see if it's released to re-start it, or pressed after closing the box.
+     {
       delay(2000); // wait a couple seconds for the button to be released, so it doesn't trigger the sequence again
 
-      if (buttonState == LOW && ubuState == 6 )  // if button was released by opening the box while Ubu was sleeping, make him start his act.  // STANDARD LOOP
-      {
         ubuState = 1; // Ubu is ready to RE-START
 
         Serial.println("Ubu is ready to RE-START (ubuState = 1).");  // Confirm that Ubu is ready to RE-START
         Serial.println(" "); // add blank line
 
-        blinkLights();
-        delay(100);
-        blinkLights();
+       // blinkLights();
+       // delay(100);
+       // blinkLights();
 
-      }
-      else if (buttonState == HIGH && ubuState == 6 )  // the button is still pressed (was not released to re-start), so we assume the box is now closed.
-      {
-        ubuState = 0; // Ubu is now going to sleep
-
-
-        turnBoxLightsOff();
-
-        Serial.println("Ubu is now going to sleep (ubuState = 0).");  // Confirm that Ubu is now going to sleep
-        Serial.println(" "); // add blank line
-
-      }
-    }
+     }
 
     Serial.print("Ubu's state is now: ");  // print the button state
     Serial.print(ubuState);  // print the button state
     Serial.println(" "); // add blank line
-
   }
 
   lastButtonState = buttonState;
   delay(20);
 
 } // end buttonCheck
-
 
 
 //********************  PLAY SOUND    **********************
@@ -359,15 +343,14 @@ void spinWheelForward()
 
 
   myMotor->run(FORWARD);
-  for (i = 0; i < 255; i++) {
+  for (i = 0; i < 255; i++) 
+   {
     myMotor->setSpeed(i);
     delay(20);
-  }
+   }
 
-  for (i = 255; i != 0; i--) {
-    myMotor->setSpeed(i);
-    delay(20);
-  }
+  // We keep the motor spinning forward through the next sequence
+
 
   ubuState = 4;
 
@@ -383,7 +366,13 @@ void spinWheelBackward()
   Serial.println("The spinning wheel moves backward"); // tell us when the spiral gidouille starts spinning backward
 
 
-  myMotor->run(BACKWARD);
+ myMotor->run(FORWARD); // First we have to spin down the forward the motion.
+  for (i = 255; i != 0; i--) {
+    myMotor->setSpeed(i);
+    delay(20);
+  }
+
+  myMotor->run(BACKWARD); // Then start the backward motion.
   for (i = 0; i < 255; i++) {
     myMotor->setSpeed(i);
     delay(20);
@@ -404,7 +393,6 @@ void spinWheelBackward()
 //********************  UBU ACTIONS    **********************
 
 void ubuActions() // Ubu does his act (flaps its wings, shakes its head and sings advice)
-
 {
 
   if (ubuState == 4) // If Ubu has woken up, and his gidouille is spinning forward.
@@ -417,7 +405,7 @@ void ubuActions() // Ubu does his act (flaps its wings, shakes its head and sing
     Serial.print("Start Ubu actions. The time is now: "); // tell us when Ubu loop is invoked
     Serial.println(ubu_time); // tell how much time Ubu has used so far
 
-    while (ubu_time <= 8000) //
+    while (ubu_time <= 15000) // do this for 15 seconds.
     {
 
       buttonCheck(); // check to see if the button is pressed
@@ -443,7 +431,6 @@ void ubuActions() // Ubu does his act (flaps its wings, shakes its head and sing
 
   Serial.print("Ubu has performed his act. He can now wind down and go to sleep, after the gidouille stops spinning (ubuState is 5).");
   Serial.println(" ");
-
 
 } // end ubuActions
 
@@ -493,39 +480,12 @@ void shakeHeadRight()
 
 void blinkLights()
 {
-  turnFrontLightOn();
+  turnInsideLightsOn();
   delay (50);
-  turnFrontLightOff();
+  turnInsideLightsOff();
   delay (50);
-  turnFrontLightOn();
-  delay (50);
-  turnFrontLightOff();
 
 } // end blinkLights
-
-
-void blinkEyes()
-{
-
-  buttonCheck(); // check to see if the button is pressed
-
-  turnEyesOn();
-  delay (50);
-  turnEyesOff();
-
-} // end blinkEyes
-
-
-void turnEyesOn()
-{
-  digitalWrite(ubu_eyes, HIGH);   // turn the LED on (HIGH is the voltage level)
-} // end turnEyesOn
-
-
-void turnEyesOff()
-{
-  digitalWrite(ubu_eyes, LOW);    // turn the LED off by making the voltage LOW
-} // end turnEyesOff
 
 
 void turnFrontLightOn()
@@ -564,12 +524,10 @@ void turnBoxLightsOn()
 
     turnInsideLightsOn();
 
- 
   Serial.print("Lights are now turned on (ubuState is now 2).");
   Serial.println(" ");
 
  ubuState = 2; // next step is to play the sound, when the code is ready.
-
 
 } // end turnBoxLightsOn
 
@@ -579,5 +537,29 @@ void turnBoxLightsOff()
   digitalWrite(outside_light_left, LOW);    // turn the LED off by making the voltage LOW
   digitalWrite(outside_light_right, LOW);    // turn the LED off by making the voltage LOW
 } // end
+
+
+void blinkEyes()
+{
+
+  buttonCheck(); // check to see if the button is pressed
+
+  turnEyesOn();
+  delay (50);
+  turnEyesOff();
+
+} // end blinkEyes
+
+
+void turnEyesOn()
+{
+  digitalWrite(ubu_eyes, HIGH);   // turn the LED on (HIGH is the voltage level)
+} // end turnEyesOn
+
+
+void turnEyesOff()
+{
+  digitalWrite(ubu_eyes, LOW);    // turn the LED off by making the voltage LOW
+} // end turnEyesOff
 
 
