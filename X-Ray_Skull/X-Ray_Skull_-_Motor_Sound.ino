@@ -37,7 +37,7 @@ This free software is licensed under GPLv2.
 
 Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
 
-const int box_button = 12; // the switch for the whole box may be placed on pin 12 -- it is triggered when you open the box. 
+const int box_button = ; // the switch for the whole box may be placed on pin 12 -- it is triggered when you open the box. 
 
 Servo myservo;  // create servo object to control a servo 
                 // a maximum of eight servo objects can be created 
@@ -45,7 +45,9 @@ Servo myservo;  // create servo object to control a servo
 int pos = 0;    // variable to store the servo position 
 
 
-int SoundPlaybackState = 0; // set to "0" by default, so the sound will play the first time.
+int buttonState = 0;         // variable for reading the pushbutton status
+int oldbuttonState = 0;      // for button changes
+// int SoundPlaybackState = 0; // set to "0" by default, so the sound will play the first time.
 int songValue = 28;  // Play Track 28 (Box #28), the X-Ray Skull
 int quietValue = 0;  // TRK0 means stop playing
 
@@ -70,15 +72,30 @@ Serial.begin(9600); // enables serial connection
  
 void loop() 
 { 
+  oldbuttonState = buttonState;
+  buttonState = digitalRead(buttonPin);
+  // check if the pushbutton is pressed.
+  // if it is, the buttonState is HIGH, nc button:
+  if (buttonState != oldbuttonState) {     
+    if (buttonState == HIGH) {     
+//    mcp.begin();      // use default address 0, based at 0x20
+      mcp.writeGPIO(songValue);
+    }
+    else {
+      mcp.writeGPIO(quietValue);
+    }
+  }
+  oldbuttonState = buttonState;
  
-    
+/*    
  if (SoundPlaybackState == 0) // (we have not yet played the sound)
     {  
 
     playSound() ; // This will play the sound, when the code is ready.
 
     }
-  
+ */
+ 
   for(pos = 0; pos < 60; pos += 1)  // goes from 0 degrees to 180 degrees 
   {                                  // in steps of 1 degree 
     myservo.write(pos);              // tell servo to go to position in variable 'pos' 
@@ -94,7 +111,7 @@ void loop()
 
 
 //********************  PLAY SOUND    **********************
-
+/*
 void playSound() // PLAY SOUND: This will play a sound, if all goes well, using the i2c expander, for sound playback
 
   {
@@ -109,5 +126,6 @@ mcp.writeGPIO(songValue);
 
 
   } // end playSound
+  */
 
 
