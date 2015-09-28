@@ -12,7 +12,7 @@ http://pataphysics.us
 Wonderbox specifications:
 http://bit.ly/wonderbox-spec
 
-Last updated on September 23, 2015.
+Last updated on September 27, 2015.
 
 Written by Fabrice Florin, based on free libraries from Arduino, Adafruit and others. 
 Sound playback code by Donald Day and Tim Pozar.
@@ -52,12 +52,14 @@ void setup()
   pinMode(box_button, INPUT_PULLUP);   // initialize the button's digital pin as an input.
   pinMode(led, OUTPUT);     
    
-mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
-
-// for (int i=0; i<8; i++) // commenting out the server initialization
-// {
-//   mcp.pinMode(i, OUTPUT);  //all 8 pins output
-// }   
+   
+  mcp.begin();      // use default address 0, based at 0x20
+/*  
+for (int i=0; i<8; i++) {
+  mcp.pinMode(i, OUTPUT);  //all 8 pins output
+  }
+*/
+delay(5000); //wait five seconds after powerup  
     
 } 
 

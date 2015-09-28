@@ -12,9 +12,7 @@ http://pataphysics.us
 Wonderbox specifications:
 http://bit.ly/wonderbox-spec
 
-Last updated on September 21, 2015.
-
-Last updated on September 21, 2015.
+Last updated on September 27, 2015.
 
 Written by Ilyse Magy, with help from Justin Hall,  
 based on free libraries from Arduino, Adafruit and others. 
@@ -72,7 +70,16 @@ pinMode(ledPin9, OUTPUT);
 pinMode(ledPin10, OUTPUT);
 
 pinMode(box_button, INPUT);
-mcp.begin();      // use default address 0, based at 0x20
+
+  mcp.begin();      // use default address 0, based at 0x20
+/*  
+for (int i=0; i<8; i++) {
+  mcp.pinMode(i, OUTPUT);  //all 8 pins output
+  }
+*/
+delay(5000); //wait five seconds after powerup    
+
+
 }
 
 

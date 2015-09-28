@@ -15,7 +15,7 @@ http://pataphysics.us
 Wonderbox specifications:
 http://bit.ly/wonderbox-spec
 
-Last updated on September 21, 2015.
+Last updated on September 27, 2015.
 
 Written by Jean Bolte, with help from Donald Day and Fabrice Florin, 
 based on free libraries from Arduino, Adafruit and Barraganstudio.com. 
@@ -37,7 +37,7 @@ This free software is licensed under GPLv2.
 
 Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
 
-const int box_button = ; // the switch for the whole box may be placed on pin 12 -- it is triggered when you open the box. 
+const int box_button = 12 ; // the switch for the whole box may be placed on pin 12 -- it is triggered when you open the box. 
 
 Servo myservo;  // create servo object to control a servo 
                 // a maximum of eight servo objects can be created 
@@ -57,15 +57,19 @@ int quietValue = 0;  // TRK0 means stop playing
 void setup() 
 { 
 
-mcp.begin();      // use default address 0, based at 0x20 
-// don't initialize I2C hardware ceiver here} 
-delay(5000);  //wait 5 seconds after power up before doing anything else
-
 myservo.attach(9);  // attaches the servo on pin 9 to the servo object 
 
 Serial.begin(9600); // enables serial connection
     
+  mcp.begin();      // use default address 0, based at 0x20
+/*  
+for (int i=0; i<8; i++) {
+  mcp.pinMode(i, OUTPUT);  //all 8 pins output
+  }
+*/
+delay(5000); //wait five seconds after powerup    
 
+}
 
 //********************  MAIN LOOP    **********************
 
@@ -73,7 +77,7 @@ Serial.begin(9600); // enables serial connection
 void loop() 
 { 
   oldbuttonState = buttonState;
-  buttonState = digitalRead(buttonPin);
+  buttonState = digitalRead(box_button);
   // check if the pushbutton is pressed.
   // if it is, the buttonState is HIGH, nc button:
   if (buttonState != oldbuttonState) {     
@@ -87,14 +91,6 @@ void loop()
   }
   oldbuttonState = buttonState;
  
-/*    
- if (SoundPlaybackState == 0) // (we have not yet played the sound)
-    {  
-
-    playSound() ; // This will play the sound, when the code is ready.
-
-    }
- */
  
   for(pos = 0; pos < 60; pos += 1)  // goes from 0 degrees to 180 degrees 
   {                                  // in steps of 1 degree 
@@ -107,25 +103,5 @@ void loop()
     delay(50);                       // waits 15ms for the servo to reach the position 
   } 
 }
-
-
-
-//********************  PLAY SOUND    **********************
-/*
-void playSound() // PLAY SOUND: This will play a sound, if all goes well, using the i2c expander, for sound playback
-
-  {
-  
-mcp.writeGPIO(songValue);  
-
-  Serial.print("We are now playing the sound.");
-  Serial.println(" ");
-
-
-   SoundPlaybackState = 1; // We've played the sound. Don't play it again.
-
-
-  } // end playSound
-  */
 
 

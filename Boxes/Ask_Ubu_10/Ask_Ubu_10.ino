@@ -12,7 +12,7 @@ http://bit.ly/wonderbox-schema
 About the Pataphysical Slot Machine:
 http://pataphysics.us
 
-Last updated on September 25, 2015.
+Last updated on September 27, 2015.
 
 Written by Fabrice Florin, based on free libraries from Arduino and Adafruit, with guidance by Donald Day.
 
@@ -103,14 +103,14 @@ void setup()
 
     servo1.write(30);              // tell servo 4 (Ubu head) to go to position in variable 'pos'
 
-
-  // mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
-
-  for (int i = 0; i < 8; i++)
-  {
-    // mcp.pinMode(i, OUTPUT);  //all 8 pins output
+/* 
+  mcp.begin();      // use default address 0, based at 0x20
+ 
+for (int i=0; i<8; i++) {
+  mcp.pinMode(i, OUTPUT);  //all 8 pins output
   }
-
+delay(5000); //wait five seconds after powerup
+*/
 }
 
 

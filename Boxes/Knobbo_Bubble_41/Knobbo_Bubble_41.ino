@@ -60,12 +60,14 @@ void setup()
   delay(10*songValue);
   // initialize the digital pin as an output. 
   
-mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
-
-for (int i=0; i<8; i++) // commenting out the server initialization
- {
-   mcp.pinMode(i, OUTPUT);  //all 8 pins output
- }       
+  mcp.begin();      // use default address 0, based at 0x20
+/*  
+for (int i=0; i<8; i++) {
+  mcp.pinMode(i, OUTPUT);  //all 8 pins output
+  }
+*/
+delay(5000); //wait five seconds after powerup    
+   
 }
 
 //********************  MAIN LOOP    **********************

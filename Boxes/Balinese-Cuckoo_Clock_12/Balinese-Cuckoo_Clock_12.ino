@@ -15,7 +15,7 @@ http://bit.ly/wonderbox-schema
 About the Pataphysical Slot Machine:
 http://pataphysics.us
 
-Last updated on August 25, 2015.
+Last updated on September 10, 2015.
 
 Written by Fabrice Florin, based on free libraries from Arduino and Adafruit. Sound playback code by Donald Day and Tim Pozar.
 
@@ -24,8 +24,8 @@ This free software is licensed under GPLv2.
  ****************************************************/
  
 #include <Servo.h> // for controlling servo motors
-//#include <Wire.h> // to connnect with other boxes with the i2c protocol, for sound playback
-//#include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
+#include <Wire.h> // to connnect with other boxes with the i2c protocol, for sound playback
+#include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
 // Download the latest Adafruit_MCP23008 code here: https://github.com/adafruit/Adafruit-MCP23008-library
 
 // Connect the red wire from the pataphysical bus to the 5V pin on Arduino
@@ -33,7 +33,7 @@ This free software is licensed under GPLv2.
 // Connect the green wire from the pataphysical bus to Analog 5 (i2c clock) 
 // Connect the blue wire from the pataphysical bus to Analog 4 (i2c data) 
 
-//Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
+Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
 
 const int box_button = 2; // the switch for the whole box is on pin 2 -- it is triggered when you open the box 
 const int temple_outside_light_left = 3; // temple left light LED is on pin 3
@@ -66,8 +66,12 @@ int wing_pos_front = 75;    // Garuda's front wing position
 int garudaState = 0; // set to "0" if Garuda is asleep. He needs to wait until someone opens the box (which releases the button and starts the sequence).
 int buttonState = 0;         // variable for reading the button status
 int lastButtonState = 0;      // for tracking button changes
-//int songValue = 0;           // for sound playback
-
+int songValue = 12;  // Play Track 12 (Box #12), see tracks list below
+int quietValue = 0;  // TRK0 means stop playing
+  
+ // Pataphysical Tracks List:
+ // http://bit.ly/pata-tracks-list
+ 
 unsigned long garuda_start;
 unsigned long garuda_time;
 // unsigned long garuda_act_total_duration;
@@ -93,6 +97,8 @@ servo5.attach(12);  // attaches the servo 5 on pin 12 to the servo object that m
 servo6.attach(13);  // attaches the servo 6 on pin 13 to the servo object that makes the left door move
 
 servo1.write(112); // tell servo1 (Garuda moves) to go back
+servo3.write(0);  // makes the left wing flap to the back
+// servo3.writeMicroseconds(1500);  // set servo to mid-point
 servo5.write(180); // tell servo 5 (right door) to close
 servo6.write(0);   // tell servo 6 (left door) to close
 
@@ -110,14 +116,14 @@ Serial.println(garudaState);
 
 Serial.println(" ");
     
-    
-// mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
+  mcp.begin();      // use default address 0, based at 0x20
+/*  
+for (int i=0; i<8; i++) {
+  mcp.pinMode(i, OUTPUT);  //all 8 pins output
+  }
+*/
+delay(5000); //wait five seconds after powerup    
 
-//
-// for (int i=0; i<8; i++) 
-// {
-// mcp.pinMode(i, OUTPUT);  //all 8 pins output
-// }   
     
 } 
 
@@ -175,7 +181,7 @@ void loop()
      
      flapWingsBackward();  
    
-     // playSound() ; // This will play the sound, when the code is ready.
+     playSound() ; // This will play the sound, when the code is ready.
 
        if ( loc == dest_back )   // STANDARD LOOP 1: GARUDA IS IN THE BACK, TELL HIM TO OPEN DOORS, THEN MOVE TO THE FRONT (OR CLOSE DOORS IF HE'S DONE) 
        {
@@ -330,8 +336,8 @@ void playSound() // PLAY SOUND: This will play a sound, if all goes well, using 
 
   {
   
-  // mcp.writeGPIO(12); // ask the sound server to play the sound file for the Bali Cuckoo Clock.
-  // The file name is actually 'TRK12.MP3', but we're only sending the song value '4', the sound server will fill in 'TRK' and '.mp3' for us.
+mcp.writeGPIO(songValue);
+ // The file name is actually 'TRK12.MP3', but we're only sending the song value '4', the sound server will fill in 'TRK' and '.mp3' for us.
   
   garudaState = 2;
 
