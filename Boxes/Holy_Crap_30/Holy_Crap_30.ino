@@ -40,22 +40,19 @@ The code below is a basic toggle test for i/o expansion. It flips pin #0 of a MC
 
 // writeGPIO(data);
 
-
 Adafruit_MCP23008 mcp;
 
-const int buttonPin = 12;     // the number of the pushbutton pin
-int buttonState = 0;         // variable for reading the pushbutton status
-int oldbuttonState = 0;      // for button changes
-int songValue = 30;  // Play Track 30 (Box #30)
-int quietValue = 0;  // TRK0 means stop playing
+const int buttonPin = 12;  // the number of the pushbutton pin
+int buttonState = 0;       // variable for reading the pushbutton status
+int oldbuttonState = 0;    // for button changes
+int songValue = 30;        // Play Track 30 (Box #30)
+int quietValue = 0;        // TRK0 means stop playing
   
-const int led = 10; // LED group 1 is on pin 10
-
-  
+const int led = 11;        // LED group 1 is on pin 10
+ 
  // Pataphysical Tracks List:
  // http://bit.ly/pata-tracks-list
  
-  
 void setup() {  
   // pinMode(buttonPin, INPUT_PULLUP);
   pinMode(buttonPin, INPUT);
@@ -66,15 +63,11 @@ for (int i=0; i<8; i++) {
   mcp.pinMode(i, OUTPUT);  //all 8 pins output
   }
 */
+digitalWrite(led, LOW);   // turn the LED on (HIGH is the voltage level)
 delay(5000); //wait five seconds after powerup
 }
 
-
 void loop() {
-  
- digitalWrite(led, HIGH);   // turn the LED on (HIGH is the voltage level)
-
-  
   oldbuttonState = buttonState;
   buttonState = digitalRead(buttonPin);
   // check if the pushbutton is pressed.
@@ -83,14 +76,13 @@ void loop() {
     if (buttonState == HIGH) {     
 //    mcp.begin();      // use default address 0, based at 0x20
       mcp.writeGPIO(songValue);
+      digitalWrite(led, HIGH);   // turn the LED on (HIGH is the voltage level)
     }
     else {
       mcp.writeGPIO(quietValue);
+      digitalWrite(led, LOW);   // turn the LED on (HIGH is the voltage level)
     }
   }
   oldbuttonState = buttonState;
   delay(20);
-  
-  
-  
 }
