@@ -12,7 +12,7 @@ http://pataphysics.us
 Wonderbox specifications:
 http://bit.ly/wonderbox-spec
 
-Last updated on September 22, 2015.
+Last updated on September 27, 2015.
 
 Written by Fabrice Florin and Freddy Hahne, 
 based on free libraries from Arduino, Adafruit and others. 
