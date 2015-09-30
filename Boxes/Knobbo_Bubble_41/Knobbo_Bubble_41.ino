@@ -7,7 +7,7 @@ About the Pataphysical Slot Machine:
 http://pataphysics.us
 Wonderbox specifications:
 http://bit.ly/wonderbox-spec
-Last updated on September 26, 2015.
+Last updated on September 28, 2015.
 Written by Mark Petrakis, based on free libraries from Arduino, Adafruit and others. 
 Sound playback code by Donald Day and Tim Pozar.
 This free software is licensed under GPLv2.

@@ -39,7 +39,7 @@ const int box_button = 3; // the switch for the whole box is placed on pin 3 -- 
 int buttonState = 0;         // variable for reading the pushbutton status
 int oldbuttonState = 0;      // for button changes
 
-int songValue = 28;  // Play Track 28 (Box #28), the X-Ray Skull
+int songValue = 21;  // Play Track 21 (Box #21)
 int quietValue = 0;  // TRK0 means stop playing
 
 int ledPin1 = 13; //Set the number of LEDs you use.
@@ -58,6 +58,9 @@ int ledPin10 = 4;
 
 void setup()
 {
+  
+pinMode(box_button, INPUT);
+
 pinMode(ledPin1, OUTPUT); //Sets the LED pins as output pins.
 pinMode(ledPin2, OUTPUT);
 pinMode(ledPin3, OUTPUT);
@@ -68,8 +71,6 @@ pinMode(ledPin7, OUTPUT);
 pinMode(ledPin8, OUTPUT);
 pinMode(ledPin9, OUTPUT);
 pinMode(ledPin10, OUTPUT);
-
-pinMode(box_button, INPUT);
 
   mcp.begin();      // use default address 0, based at 0x20
 /*  
