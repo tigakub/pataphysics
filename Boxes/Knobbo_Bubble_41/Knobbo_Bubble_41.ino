@@ -40,6 +40,7 @@ int led4 = 3;
 int led5 = 4;
 int led6 = 5;
 int led7 = 6;
+int led13 = 13;
 
 //********************  SETUP    **********************
 
@@ -55,6 +56,7 @@ void setup()
   pinMode(led6, OUTPUT); 
   pinMode(led7, OUTPUT);
   pinMode(led7, OUTPUT);     
+  pinMode(led13, OUTPUT); // Pin 13 is the one on the board so I we can see what is happening from that side of the box.
   
   // Wait for 10mS * box number value to try to avoid collision with other boxes doing this same thing.
   delay(10*songValue);
@@ -75,26 +77,7 @@ delay(5000); //wait five seconds after powerup
 void loop() 
 { 
  
-  digitalWrite(led1, HIGH);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(led2, HIGH);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(led3, HIGH);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(led4, HIGH);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(led5, HIGH);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(led6, HIGH);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(led7, HIGH);   // turn the LED on (HIGH is the voltage level)
-                  
-  delay(2000);               // wait for a second
-  digitalWrite(led1, LOW);    // turn the LED off by making the voltage LOW
-  digitalWrite(led2, LOW);    // turn the LED off by making the voltage LOW
-  digitalWrite(led3, LOW);    // turn the LED off by making the voltage LOW
-  digitalWrite(led4, LOW);    // turn the LED off by making the voltage LOW
-  digitalWrite(led5, LOW);    // turn the LED off by making the voltage LOW
-  digitalWrite(led6, LOW);    // turn the LED off by making the voltage LOW
-  digitalWrite(led7, LOW);    // turn the LED off by making the voltage LOW
-  delay(1500);               // wait for a second
-
-  
-  // First ask the server to play a sound if the button has been pressed.
+    // First ask the server to play a sound if the button has been pressed.
   oldbuttonState = buttonState;
   buttonState = digitalRead(box_button);
   // check if the pushbutton is pressed.
@@ -112,4 +95,37 @@ void loop()
   }
   oldbuttonState = buttonState;
   delay(20);
+  
+ if (buttonState == HIGH)     // Door is open.  Flash the lights...
+  { 
+  digitalWrite(led1, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(led2, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(led3, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(led4, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(led5, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(led6, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(led7, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(led13, HIGH);  // turn the LED on (HIGH is the voltage level)
+  delay(1500);                // wait for a second
+  digitalWrite(led1, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led2, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led3, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led4, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led5, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led6, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led7, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led13, LOW);    // turn the LED off by making the voltage LOW
+  delay(1500);                // wait for a second
+  } 
+  else   //  Door is closed.  Turn off the lights...
+  {
+  digitalWrite(led1, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led2, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led3, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led4, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led5, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led6, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led7, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led13, LOW);    // turn the LED off by making the voltage LOW
+}
 }
