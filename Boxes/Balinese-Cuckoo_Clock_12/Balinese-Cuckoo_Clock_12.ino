@@ -15,9 +15,10 @@ http://bit.ly/wonderbox-schema
 About the Pataphysical Slot Machine:
 http://pataphysics.us
 
-Last updated on September 10, 2015.
+Last updated on September 30, 2015.
 
-Written by Fabrice Florin, based on free libraries from Arduino and Adafruit. Sound playback code by Donald Day and Tim Pozar.
+Written by Fabrice Florin, based on free libraries from Arduino and Adafruit. 
+Sound playback code by Donald Day and Tim Pozar.
 
 This free software is licensed under GPLv2.
   
@@ -98,7 +99,7 @@ servo6.attach(13);  // attaches the servo 6 on pin 13 to the servo object that m
 
 servo1.write(112); // tell servo1 (Garuda moves) to go back
 servo3.write(0);  // makes the left wing flap to the back
-// servo3.writeMicroseconds(1500);  // set servo to mid-point
+// servo3.writeMicroseconds(1500);  // set servo to mid-point?
 servo5.write(180); // tell servo 5 (right door) to close
 servo6.write(0);   // tell servo 6 (left door) to close
 
@@ -123,7 +124,6 @@ for (int i=0; i<8; i++) {
   }
 */
 delay(5000); //wait five seconds after powerup    
-
     
 } 
 
@@ -181,7 +181,7 @@ void loop()
      
      flapWingsBackward();  
    
-     playSound() ; // This will play the sound, when the code is ready.
+     playSound() ; // This will play the sound.
 
        if ( loc == dest_back )   // STANDARD LOOP 1: GARUDA IS IN THE BACK, TELL HIM TO OPEN DOORS, THEN MOVE TO THE FRONT (OR CLOSE DOORS IF HE'S DONE) 
        {
@@ -277,7 +277,9 @@ void buttonCheck() // CHECK BUTTON: Check if the button has been pressed, and re
       turnFrontLightOff();
 
       closeDoors();
-  
+ 
+      stopSound() ; // This will stop the sound.
+ 
       turnInsideLightsOff();
      
       turnTempleLightsOff();
@@ -290,8 +292,12 @@ void buttonCheck() // CHECK BUTTON: Check if the button has been pressed, and re
 
       }
       else if (buttonState == HIGH && garudaState == 8 )  // if button was pressed after Garuda's sequence ends, check to see if it's released to re-start it, or pressed after closing the box.
-      { 
+      {  
+        
+        stopSound() ; // This will stop the sound.
+
         delay(2000); // wait a couple seconds for the button to be released, so it doesn't trigger the sequence again
+
      
         if (buttonState == LOW && garudaState == 8 )  // if button was released by opening the box while Garuda was sleeping, make him start his act.  // STANDARD LOOP
         { 
@@ -307,8 +313,11 @@ void buttonCheck() // CHECK BUTTON: Check if the button has been pressed, and re
         }
         else if (buttonState == HIGH && garudaState == 8 )  // the button is still pressed (was not released to re-start), so we assume the box is now closed.
         {
-        garudaState = 0; // Garuda is now going to sleep
-      
+       
+         
+      stopSound() ; // This will stop the sound.
+
+      garudaState = 0; // Garuda is now going to sleep      
           
       turnTempleLightsOff();
 
@@ -337,7 +346,9 @@ void playSound() // PLAY SOUND: This will play a sound, if all goes well, using 
   {
   
 mcp.writeGPIO(songValue);
- // The file name is actually 'TRK12.MP3', but we're only sending the song value '4', the sound server will fill in 'TRK' and '.mp3' for us.
+ // Play track 12, using the songValue variable. 
+ // The file name is actually 'TRK12.MP3', but we're only sending the song value '12'.
+ // The sound server will fill in 'TRK' and '.mp3' for us.
   
   garudaState = 2;
 
@@ -346,6 +357,21 @@ mcp.writeGPIO(songValue);
 
 
   } // end playSound
+
+
+void stopSound() // STOP SOUND
+
+  {
+  
+mcp.writeGPIO(quietValue);
+ // Play track 0, using the quietValue variable. 
+ // The file name is actually 'TRK0.MP3', but we're only sending the song value '0'.
+ 
+  Serial.print("We are now stopping the sound.");
+  Serial.println(" ");
+
+
+  } // end stopSound
 
 
 //********************  LOCATION CHECK    **********************

@@ -80,7 +80,7 @@ int quietValue = 0;  // TRK0 means stop playing
 void setup()
 {
 
-  pinMode(box_button, INPUT_PULLUP);   // initialize the button's digital pin as an input.
+  pinMode(box_button, INPUT);   // initialize the button's digital pin as an input.
   pinMode(outside_light_left, OUTPUT);   // initialize the left temple light's digital pin as an output.
   pinMode(outside_light_right, OUTPUT);   // initialize the right temple light's digital pin as an output.
   pinMode(inside_light, OUTPUT);   // initialize the temple inside light's digital pin as an output.
@@ -327,13 +327,6 @@ int i;    // generic variable to control the spinning wheel
 
 void spinWheelForward()
 {
-
-
-  // This code is experimental, and will have to be tested.
-  // We would like to spin the spiral gidouille independently from the head shaking,
-  // so the wheel can spin longer, like for 30 seconds, without winding up and down every few seconds,
-  // which could drive some folks on edge.
-  // I doubt that I wrote the right code for that, but let's test it.
 
 
   // buttonCheck(); // check to see if the button is pressed

@@ -1,6 +1,6 @@
 /****************************************************
 
-Arduino code for the Time flies box, an interactive art "wonderbox"
+Arduino code for the 'Time Flies' box, an interactive art "wonderbox"
 for the Pataphysical Slot Machine.
 
 This software module controls the lights and sounds for that box, 
@@ -12,7 +12,7 @@ http://pataphysics.us
 Wonderbox specifications:
 http://bit.ly/wonderbox-spec
 
-Last updated on September 27, 2015.
+Last updated on September 30, 2015.
 
 Written by Fabrice Florin, based on free libraries from Arduino, Adafruit and others. 
 Sound playback code by Donald Day and Tim Pozar.
@@ -40,9 +40,9 @@ int oldbuttonState = 0;      // for button changes
 int songValue = 23;  // Play Track 23 (Box #23)
 int quietValue = 0;  // TRK0 means stop playing
 
-const int led_1 = 3; // LED group 1 is on pin 10
-const int led_2 = 4; // LED group 2 is on pin 11
-const int led_3 = 5; // LED group 2 is on pin 11
+const int led_1 = 3; // LED group 1 is on pin 3
+const int led_2 = 4; // LED group 2 is on pin 4
+const int led_3 = 5; // LED group 3 is on pin 5
 
 
 //********************  SETUP    **********************
@@ -89,11 +89,24 @@ void loop()
       
    // Then make the three groups of LEDs blink on and off -- feel free to tweak the timing as needed 
   
+  digitalWrite(led_1, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(led_2, HIGH);    // turn the LED off by making the voltage HIGH
+  digitalWrite(led_3, HIGH);    // turn the LED off by making the voltage HIGH
+ 
+  
    }
     else 
     {
       
     mcp.writeGPIO(quietValue);
+
+   // Then make the three groups of LEDs blink on and off -- feel free to tweak the timing as needed 
+  
+  digitalWrite(led_1, LOW);   // tturn the LED off by making the voltage LOW
+  digitalWrite(led_2, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led_3, LOW);    // turn the LED off by making the voltage LOW
+  delay(1000);               // wait for a second
+
 
    }
   }
@@ -101,11 +114,6 @@ void loop()
   oldbuttonState = buttonState;
   delay(20);
  
-  digitalWrite(led_1, HIGH);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(led_2, HIGH);    // turn the LED off by making the voltage LOW
-  digitalWrite(led_3, HIGH);    // turn the LED off by making the voltage LOW
-  delay(1000);               // wait for a second
-      
 
 }
 

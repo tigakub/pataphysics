@@ -1,6 +1,6 @@
 /****************************************************
 
-Arduino code for the Yellow Submarine box, an interactive art "wonderbox"
+Arduino code for the 'Mother of Yes' wonderbox, an interactive artwork
 for the Pataphysical Slot Machine.
 
 This software module controls the lights and sounds for that box, 
@@ -12,9 +12,9 @@ http://pataphysics.us
 Wonderbox specifications:
 http://bit.ly/wonderbox-spec
 
-Last updated on October 4, 2015.
+Last updated on November 20, 2015.
 
-Written by Fabrice Florin and Janey Fritsche, based on free libraries from Arduino, Adafruit and others. 
+Written by Fabrice Florin, based on free libraries from Arduino, Adafruit and others. 
 Sound playback code by Donald Day and Tim Pozar.
 
 This free software is licensed under GPLv2.
@@ -33,14 +33,14 @@ This free software is licensed under GPLv2.
 
 Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
 
-const int box_button = 12; // the switch for the whole box may be placed on pin 12 -- it is triggered when you open the box. 
+const int box_button = 2; // the switch for the whole box may be placed on pin 12 -- it is triggered when you open the box. 
 int buttonState = 0;         // variable for reading the pushbutton status
 int oldbuttonState = 0;      // for button changes
 
-int songValue = 22;  // Play Track 22 (Box #22)
+int songValue = 16;  // Play Track 16 (Box #16)
 int quietValue = 0;  // TRK0 means stop playing
 
-const int led = 10; // LED group is on pin 10
+const int led = 3; // LED is on pin 3
 
 
 //********************  SETUP    **********************
@@ -51,18 +51,14 @@ void setup()
   // initialize the digital pin as an output.
   pinMode(box_button, INPUT);   // initialize the button's digital pin as an input.
   pinMode(led, OUTPUT);     
- 
- digitalWrite(led, HIGH);    // turn the LED off by making the voltage LOW
-   
-  
+    
   mcp.begin();      // use default address 0, based at 0x20
 /*  
 for (int i=0; i<8; i++) {
   mcp.pinMode(i, OUTPUT);  //all 8 pins output
   }
 */
-delay(5000); //wait five seconds after powerup  
-    
+delay(5000); //wait five seconds after powerup    
 } 
 
 
@@ -82,32 +78,34 @@ void loop()
   {     
     if (buttonState == HIGH) 
     {     
-     
-   // Turn on the LEDs 
-        
-       digitalWrite(led, HIGH);    // turn the LED off by making the voltage LOW
-  // delay(1000);   
-        
-         // Then play a sound, since the button has been pressed.    
+      
+  // Play a sound, since the button has been pressed.    
       
   mcp.writeGPIO(songValue);
+      
+   // Then make the three groups of LEDs blink on and off -- feel free to tweak the timing as needed 
+  
+  digitalWrite(led, HIGH);   // turn the LED on (HIGH is the voltage level)
 
-       
+  
    }
     else 
     {
       
     mcp.writeGPIO(quietValue);
 
- digitalWrite(led, LOW);    // turn the LED off by making the voltage LOW
-  // delay(1000);   
+   // Then make the three groups of LEDs blink on and off -- feel free to tweak the timing as needed 
+  
+  digitalWrite(led, LOW);   // tturn the LED off by making the voltage LOW
+  delay(1000);               // wait for a second
 
-    }
+
+   }
   }
+ 
   oldbuttonState = buttonState;
   delay(20);
  
 
- 
 }
 
