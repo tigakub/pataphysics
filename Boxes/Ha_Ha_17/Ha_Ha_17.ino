@@ -48,23 +48,11 @@ const int led_2 = 11; // LED group 2 is on pin 11
 
 //********************  SETUP    **********************
 
-void setup() 
-{ 
-
-  // initialize the digital pin as an output.
-  pinMode(led_1, OUTPUT);     
-  pinMode(led_2, OUTPUT);   
-  
+void setup() {  
+  pinMode(buttonPin, INPUT);
+  delay(5000); //wait five seconds after powerup
   mcp.begin();      // use default address 0, based at 0x20
-/*  
-for (int i=0; i<8; i++) {
-  mcp.pinMode(i, OUTPUT);  //all 8 pins output
-  }
-*/
-delay(5000); //wait five seconds after powerup    
-
-    
-} 
+}
 
 
 //********************  MAIN LOOP    **********************
