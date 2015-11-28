@@ -18,11 +18,9 @@ This code requires the Arduino Library for the MCP23008 (and '9) I2C I/O expande
 https://github.com/adafruit/Adafruit-MCP23008-library
 (this code needs to be placed in 'Arduino/libraries/Adafruit_MCP23008' folder on your computer)
 
-Last updated on September 27, 2015.
+Last updated on November 28, 2015.
 
-Written by Donald Day and Tim Pozar, based on free libraries from Arduino and Adafruit. 
-
-This sketch used to be called mcp_button_random4.ino, before being renamed Sound_Client.ino for clarity.
+Written by Donald Day, Fabrice Florin and Tim Pozar, based on free libraries from Arduino and Adafruit. 
 
 This free software is licensed under GPLv2.
   
@@ -66,15 +64,9 @@ int quietValue = 0;  // TRK0 means stop playing
  
   
 void setup() {  
-  // pinMode(buttonPin, INPUT_PULLUP);
   pinMode(buttonPin, INPUT);
+  delay(5000); //wait five seconds after powerup
   mcp.begin();      // use default address 0, based at 0x20
-/*  
-for (int i=0; i<8; i++) {
-  mcp.pinMode(i, OUTPUT);  //all 8 pins output
-  }
-*/
-delay(5000); //wait five seconds after powerup
 }
 
 
