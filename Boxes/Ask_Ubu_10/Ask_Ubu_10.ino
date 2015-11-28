@@ -29,16 +29,19 @@ https://github.com/adafruit/Adafruit-MCP23008-library
 
  ****************************************************/
 
-#include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_PWMServoDriver.h"
 #include <Servo.h>
-// #include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
+
+/* Commenting out i2c server code for now, to avoid conflict with Motorshield
+#include <Wire.h>
+#include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
 
 // Connect the red wire from the pataphysical bus to the 5V pin on Arduino
 // Connect the black wire from the pataphysical bus to any ground pin on Arduino
 // Connect the green wire from the pataphysical bus to Analog 5 (i2c clock)
 // Connect the blue wire from the pataphysical bus to Analog 4 (i2c data)
+*/
 
 
 // Create the motor shield object with the default I2C address
@@ -103,9 +106,11 @@ void setup()
 
     servo1.write(30);              // tell servo 4 (Ubu head) to go to position in variable 'pos'
 
-/* 
+/* Commenting out i2c server code for now, to avoid conflict with Motorshield
+  delay(5000); // wait before calling the sound server
   mcp.begin();      // use default address 0, based at 0x20
  */
+ 
 }
 
 
