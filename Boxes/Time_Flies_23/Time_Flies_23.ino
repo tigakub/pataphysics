@@ -12,7 +12,7 @@ http://pataphysics.us
 Wonderbox specifications:
 http://bit.ly/wonderbox-spec
 
-Last updated on September 30, 2015.
+Last updated on November 28, 2015.
 
 Written by Fabrice Florin, based on free libraries from Arduino, Adafruit and others. 
 Sound playback code by Donald Day and Tim Pozar.
@@ -56,13 +56,8 @@ void setup()
   pinMode(led_2, OUTPUT);   
   pinMode(led_3, OUTPUT);  
    
+  delay(5000); //wait five seconds after powerup    
   mcp.begin();      // use default address 0, based at 0x20
-/*  
-for (int i=0; i<8; i++) {
-  mcp.pinMode(i, OUTPUT);  //all 8 pins output
-  }
-*/
-delay(5000); //wait five seconds after powerup    
 } 
 
 
@@ -87,7 +82,7 @@ void loop()
       
   mcp.writeGPIO(songValue);
       
-   // Then make the three groups of LEDs blink on and off -- feel free to tweak the timing as needed 
+   // Then turn on the three LEDs
   
   digitalWrite(led_1, HIGH);   // turn the LED on (HIGH is the voltage level)
   digitalWrite(led_2, HIGH);    // turn the LED off by making the voltage HIGH
@@ -100,12 +95,11 @@ void loop()
       
     mcp.writeGPIO(quietValue);
 
-   // Then make the three groups of LEDs blink on and off -- feel free to tweak the timing as needed 
+   // Then turn off the three groups of LEDs 
   
   digitalWrite(led_1, LOW);   // tturn the LED off by making the voltage LOW
   digitalWrite(led_2, LOW);    // turn the LED off by making the voltage LOW
   digitalWrite(led_3, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);               // wait for a second
 
 
    }
