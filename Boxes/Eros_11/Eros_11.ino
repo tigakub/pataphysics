@@ -56,17 +56,9 @@ int quietValue = 0;  // TRK0 means stop playing
  
   
 void setup() {  
-  // pinMode(buttonPin, INPUT_PULLUP);
   pinMode(buttonPin, INPUT);
-
-
+  delay(5000); //wait five seconds after powerup
   mcp.begin();      // use default address 0, based at 0x20
-/*  
-for (int i=0; i<8; i++) {
-  mcp.pinMode(i, OUTPUT);  //all 8 pins output
-  }
-*/
-delay(5000); //wait five seconds after powerup
 }
 
 
