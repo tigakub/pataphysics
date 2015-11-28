@@ -47,22 +47,13 @@ const int led = 10; // LED group is on pin 10
 
 void setup() 
 { 
-
-  // initialize the digital pin as an output.
   pinMode(box_button, INPUT);   // initialize the button's digital pin as an input.
   pinMode(led, OUTPUT);     
  
  digitalWrite(led, HIGH);    // turn the LED off by making the voltage LOW
    
-  
+  delay(5000); //wait five seconds after powerup  
   mcp.begin();      // use default address 0, based at 0x20
-/*  
-for (int i=0; i<8; i++) {
-  mcp.pinMode(i, OUTPUT);  //all 8 pins output
-  }
-*/
-delay(5000); //wait five seconds after powerup  
-    
 } 
 
 
