@@ -12,7 +12,7 @@ http://pataphysics.us
 Wonderbox specifications:
 http://bit.ly/wonderbox-spec
 
-Last updated on November 20, 2015.
+Last updated on November 28, 2015.
 
 Written by Fabrice Florin, based on free libraries from Arduino, Adafruit and others. 
 Sound playback code by Donald Day and Tim Pozar.
@@ -45,21 +45,12 @@ const int led = 3; // LED is on pin 3
 
 //********************  SETUP    **********************
 
-void setup() 
-{ 
 
-  // initialize the digital pin as an output.
-  pinMode(box_button, INPUT);   // initialize the button's digital pin as an input.
-  pinMode(led, OUTPUT);     
-    
+void setup() {  
+  pinMode(buttonPin, INPUT);
+  delay(5000); //wait five seconds after powerup
   mcp.begin();      // use default address 0, based at 0x20
-/*  
-for (int i=0; i<8; i++) {
-  mcp.pinMode(i, OUTPUT);  //all 8 pins output
-  }
-*/
-delay(5000); //wait five seconds after powerup    
-} 
+}
 
 
 //********************  MAIN LOOP    **********************
