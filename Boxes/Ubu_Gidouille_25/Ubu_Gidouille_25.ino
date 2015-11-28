@@ -22,11 +22,14 @@ This free software is licensed under GPLv2.
   
  ****************************************************/
 
-#include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_PWMServoDriver.h"
 #include <Servo.h>
-#include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
+
+/* Commenting out i2c server code for now, to avoid conflicts with Motor Shield
+ #include <Wire.h>
+ #include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
+*/
 
 // Connect the red wire from the pataphysical bus to the 5V pin on Arduino
 // Connect the black wire from the pataphysical bus to any ground pin on Arduino
@@ -41,14 +44,18 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 // Connect a DC motor to port M1
 Adafruit_DCMotor *myMotor = AFMS.getMotor(1);
 
-Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
+ /* Commenting out i2c server code for now, to avoid conflicts with Motor Shield
+ Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
+*/
 
 const int box_button = 4; // the switch for the whole box may be placed on pin 12 -- it is triggered when you open the box. 
 int buttonState = 0;         // variable for reading the pushbutton status
 int oldbuttonState = 0;      // for button changes
 
+/* Commenting out i2c server code for now, to avoid conflicts with Motor Shield
 int songValue = 25;  // Play Track 25 (Box #25)
 int quietValue = 0;  // TRK0 means stop playing
+*/
 
 const int led_1 = 7; // LED group 1 is on pin 3
 const int led_2 = 6; // LED group 2 is on pin 4
@@ -75,14 +82,10 @@ void setup()
   myMotor->setSpeed(200);
   myMotor->run(RELEASE);
 
-   
-  mcp.begin();      // use default address 0, based at 0x20
-/*  
-for (int i=0; i<8; i++) {
-  mcp.pinMode(i, OUTPUT);  //all 8 pins output
-  }
-*/
+/* Commenting out i2c server code for now, to avoid conflicts with Motor Shield
 delay(5000); //wait five seconds after powerup    
+  mcp.begin();      // use default address 0, based at 0x20
+*/
 } 
 
 
@@ -103,10 +106,11 @@ void loop()
     if (buttonState == HIGH) 
     {     
       
-  // Play a sound, since the button has been pressed.    
-      
+ /* Commenting out i2c server code for now, to avoid conflicts with Motor Shield
+ // Play a sound, since the button has been pressed.    
   mcp.writeGPIO(songValue);
-       
+*/
+     
    // Turn on the two LEDs 
   
   digitalWrite(led_1, HIGH);   // turn the LED on (HIGH is the voltage level)
@@ -121,7 +125,9 @@ void loop()
     else 
     {
       
-  mcp.writeGPIO(quietValue);
+ /* Commenting out i2c server code for now, to avoid conflicts with Motor Shield
+ mcp.writeGPIO(quietValue);
+*/
   
   spinWheelDown();
 
