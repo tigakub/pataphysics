@@ -44,10 +44,9 @@ int led13 = 13;
 
 //********************  SETUP    **********************
 
-void setup() 
-{ 
-  pinMode(box_button, INPUT_PULLUP);   // initialize the button's digital pin as an input.
- 
+void setup() {  
+  pinMode(buttonPin, INPUT);
+  
   pinMode(led1, OUTPUT);
   pinMode(led2, OUTPUT);
   pinMode(led2, OUTPUT); 
@@ -56,20 +55,10 @@ void setup()
   pinMode(led6, OUTPUT); 
   pinMode(led7, OUTPUT);
   pinMode(led7, OUTPUT);     
-  pinMode(led13, OUTPUT); // Pin 13 is the one on the board so I we can see what is happening from that side of the box.
+  pinMode(led13, OUTPUT); // Pin 13 is the one on the board so we can see what is happening from that side of the box.
   
-  // Wait for 10mS * box number value to try to avoid collision with other boxes doing this same thing.
-  delay(10*songValue);
-  // initialize the digital pin as an output. 
-  
+  delay(5000); //wait five seconds after powerup
   mcp.begin();      // use default address 0, based at 0x20
-/*  
-for (int i=0; i<8; i++) {
-  mcp.pinMode(i, OUTPUT);  //all 8 pins output
-  }
-*/
-delay(5000); //wait five seconds after powerup    
-   
 }
 
 //********************  MAIN LOOP    **********************
