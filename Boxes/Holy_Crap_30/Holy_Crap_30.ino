@@ -54,18 +54,13 @@ const int led = 11;        // LED group 1 is on pin 10
  // http://bit.ly/pata-tracks-list
  
 void setup() {  
-  // pinMode(buttonPin, INPUT_PULLUP);
   pinMode(buttonPin, INPUT);
   pinMode(led, OUTPUT); 
+  digitalWrite(led, HIGH);   // turn the LED on (HIGH is the voltage level)
+  delay(5000); //wait five seconds after powerup
   mcp.begin();      // use default address 0, based at 0x20
-/*  
-for (int i=0; i<8; i++) {
-  mcp.pinMode(i, OUTPUT);  //all 8 pins output
-  }
-*/
-digitalWrite(led, LOW);   // turn the LED on (HIGH is the voltage level)
-delay(5000); //wait five seconds after powerup
 }
+
 
 void loop() {
   oldbuttonState = buttonState;
