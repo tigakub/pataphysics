@@ -18,7 +18,7 @@ This code requires the Arduino Library for the MCP23008 (and '9) I2C I/O expande
 https://github.com/adafruit/Adafruit-MCP23008-library
 (this code needs to be placed in 'Arduino/libraries/Adafruit_MCP23008' folder on your computer)
 
-Last updated on August 27, 2015.
+Last updated on November 28, 2015.
 
 Written by Donald Day and Tim Pozar, based on free libraries from Arduino and Adafruit. 
 
@@ -94,14 +94,8 @@ pinMode(red2Pin, OUTPUT);
 pinMode(green2Pin, OUTPUT);
 pinMode(blue2Pin, OUTPUT); 
 
-
-  mcp.begin();      // use default address 0, based at 0x20
-/*  
-for (int i=0; i<8; i++) {
-  mcp.pinMode(i, OUTPUT);  //all 8 pins output
-  }
-*/
-delay(5000); //wait five seconds after powerup
+delay(5000); //wait five seconds before calling the sound server
+mcp.begin();      // use default address 0, based at 0x20
 
 }
 
