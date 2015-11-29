@@ -1,3 +1,4 @@
+// waitby# 11/28
 /*************************************************** 
 Arduino code for playing sounds from a Wonderbox client, using a separate sound server with MCP23008 i2c expander and MusicMaker,
 in the Wonderbox system that powers the Pataphysical Slot Machine.
@@ -12,9 +13,8 @@ http://pataphysics.us
 This code requires the Arduino Library for the MCP23008 (and '9) I2C I/O expander at:
 https://github.com/adafruit/Adafruit-MCP23008-library
 (this code needs to be placed in 'Arduino/libraries/Adafruit_MCP23008' folder on your computer)
-Last updated on September 27, 2015.
-Written by Donald Day and Tim Pozar, based on free libraries from Arduino and Adafruit. 
-This sketch used to be called mcp_button_random4.ino, before being renamed Sound_Client.ino for clarity.
+Last updated on November 28, 2015.
+Written by Donald Day, Fabrice Florin and Tim Pozar, based on free libraries from Arduino and Adafruit. 
 This free software is licensed under GPLv2.
   
 ****************************************************/
@@ -55,7 +55,7 @@ int quietValue = 0;  // TRK0 means stop playing
   
 void setup() {  
   pinMode(buttonPin, INPUT);
-  delay(5000); //wait five seconds after powerup
+  delay(200*songValue); // waitby#
   mcp.begin();      // use default address 0, based at 0x20
 }
 

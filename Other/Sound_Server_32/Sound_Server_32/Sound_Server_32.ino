@@ -1,3 +1,4 @@
+// wait10
 /*************************************************** 
 Arduino code for playing sounds from a sound server with i2c expander and MusicMaker
 in the Wonderbox system that powers the Pataphysical Slot Machine.
@@ -14,13 +15,12 @@ This is an example for the Adafruit VS1053 Codec Breakout
 Designed specifically to work with the Adafruit VS1053 Codec Breakout 
 ----> https://www.adafruit.com/products/1381
   
-Adafruit invests time and resources providing this open source code, please support Adafruit and open-source hardware by purchasing products from Adafruit!
-  
-Written by Limor Fried/Ladyada for Adafruit Industries. Code adapted by Donald Day and Tim Pozar for the 'Pataphysical Slot Machine. 
+Last updated on November 28, 2015.
+Written by Donald Day, Fabrice Florin and Tim Pozar, 
+based on free libraries from Arduino 
+and Limor Fried/Ladyada for Adafruit Industries. 
   
 This free software is licensed under GPLv2. The Adafruit code is licensed under BSD, all text above must be included in any redistribution.
-  
-This sketch used to be called MusicMaker_expander1.ino, before being renamed Sound_Server.ino for clarity.
   
 ****************************************************/
 
@@ -63,12 +63,15 @@ int I2Cvalue = 0;
 int oldI2Cvalue = 0;
 int tracknum = 1;
 
+int boxValue = 32;
+
 void setup() {
   Serial.begin(9600);
   
   Serial.println("Initialize I2C hardware receiver");
   // Initialize the I2C chip...
-  mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
+    delay(10000); 
+    mcp.begin();      // use default address 0, based at 0x20 // This setup routine will initiate the sound playback via i2c expander
 
   for (int i=0; i<8; i++) // commenting out the server initialization
    {

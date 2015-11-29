@@ -1,3 +1,4 @@
+// waitby# 11/28
 /*************************************************** 
 Arduino code for playing sounds from a Wonderbox client, using a separate sound server with MCP23008 i2c expander and MusicMaker,
 in the Wonderbox system that powers the Pataphysical Slot Machine.
@@ -64,9 +65,16 @@ int quietValue = 0;  // TRK0 means stop playing
  
   
 void setup() {  
+  // pinMode(buttonPin, INPUT_PULLUP);
   pinMode(buttonPin, INPUT);
-  delay(5000); //wait five seconds after powerup
+  delay(200*songValue);  // waitby#
   mcp.begin();      // use default address 0, based at 0x20
+/*  
+for (int i=0; i<8; i++) {
+  mcp.pinMode(i, OUTPUT);  //all 8 pins output
+  }
+*/
+// waitby# delay(5000); //wait five seconds after powerup
 }
 
 
@@ -77,7 +85,6 @@ void loop() {
   // if it is, the buttonState is HIGH, nc button:
   if (buttonState != oldbuttonState) {     
     if (buttonState == HIGH) {     
-//    mcp.begin();      // use default address 0, based at 0x20
       mcp.writeGPIO(songValue);
     }
     else {
@@ -87,3 +94,4 @@ void loop() {
   oldbuttonState = buttonState;
   delay(20);
 }
+

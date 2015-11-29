@@ -33,7 +33,7 @@ This free software is licensed under GPLv2.
 
 Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
 
-const int box_button = 2; // the switch for the whole box may be placed on pin 12 -- it is triggered when you open the box. 
+const int box_button = 2; // the switch for the whole box is on pin 2 -- it is triggered when you open the box. 
 int buttonState = 0;         // variable for reading the pushbutton status
 int oldbuttonState = 0;      // for button changes
 
@@ -50,13 +50,20 @@ const int led_3 = 5; // LED group 3 is on pin 5
 void setup() 
 { 
 
-  // initialize the digital pin as an output.
+  // initialize the digital pins as inputs or outputs.
   pinMode(box_button, INPUT);   // initialize the button's digital pin as an input.
   pinMode(led_1, OUTPUT);     
   pinMode(led_2, OUTPUT);   
   pinMode(led_3, OUTPUT);  
-   
-  delay(5000); //wait five seconds after powerup    
+  
+  // Turn on the three LEDs
+  
+  digitalWrite(led_1, HIGH);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(led_2, HIGH);    // turn the LED off by making the voltage HIGH
+  digitalWrite(led_3, HIGH);    // turn the LED off by making the voltage HIGH
+ 
+  
+  delay(200*songValue); // wait a few seconds before calling the sound server    
   mcp.begin();      // use default address 0, based at 0x20
 } 
 
@@ -77,30 +84,36 @@ void loop()
   {     
     if (buttonState == HIGH) 
     {     
-      
-  // Play a sound, since the button has been pressed.    
-      
-  mcp.writeGPIO(songValue);
-      
-   // Then turn on the three LEDs
+   
+  // Turn on the three LEDs
   
   digitalWrite(led_1, HIGH);   // turn the LED on (HIGH is the voltage level)
   digitalWrite(led_2, HIGH);    // turn the LED off by making the voltage HIGH
   digitalWrite(led_3, HIGH);    // turn the LED off by making the voltage HIGH
  
+ 
+      
+  // Then play a sound, since the button has been pressed.    
+      
+  mcp.writeGPIO(songValue);
+      
   
    }
     else 
     {
       
-    mcp.writeGPIO(quietValue);
-
-   // Then turn off the three groups of LEDs 
+   // Turn off the three groups of LEDs 
   
   digitalWrite(led_1, LOW);   // tturn the LED off by making the voltage LOW
   digitalWrite(led_2, LOW);    // turn the LED off by making the voltage LOW
   digitalWrite(led_3, LOW);    // turn the LED off by making the voltage LOW
 
+
+  // Stop the sound.
+
+  mcp.writeGPIO(quietValue);
+
+  
 
    }
   }
