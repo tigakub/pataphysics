@@ -19,84 +19,63 @@ Sound playback code by Donald Day and Tim Pozar.
 
 This free software is licensed under GPLv2.
   
- ****************************************************/
+****************************************************/
  
+#include <Wire.h>
+#include "Adafruit_MCP23008.h"
 
-#include <Wire.h> // to connnect with other boxes with the i2c protocol, for sound playback
-#include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
-// Download the latest Adafruit_MCP23008 code here: https://github.com/adafruit/Adafruit-MCP23008-library
+/* Wiring instructions:
+For the Arduino or Diavolino clients in each Wonderbox:
+- Connect the red wire from the pataphysical bus to the 5V pin on Arduino
+- Connect the black wire from the pataphysical bus to any ground pin on Arduino
+- Connect the green wire from the pataphysical bus to Analog 5 (i2c clock) (goes to pin #1 of the expander)
+- Connect the blue wire from the pataphysical bus to Analog 4 (i2c data) (goes to pin #2 of the expander)
+For the Arduino sound server with the MCP23008 i2c expander: (ignore these if you are only working on the clients)
+- Connect pin #1 of the expander to Analog 5 (i2c clock - SCL) (green wire on the pataphysical bus)
+- Connect pin #2 of the expander to Analog 4 (i2c data - SDA) (blue wire on the pataphysical bus, yellow wire on sound server)
+- Connect pins #3, 4 and 5 of the expander to ground (address selection)
+- Connect pin #6 and 18 of the expander to 5V (power and reset disable)
+- Connect pin #9 of the expander to ground (common ground)
+- Output #0 is on pin 10 so connect an LED or whatever from that to ground
+The code below is a basic toggle test for i/o expansion. It flips pin #0 of a MCP23008 i2c pin expander up and down. 
+*/
 
-// Connect the red wire from the pataphysical bus to the 5V pin on Arduino
-// Connect the black wire from the pataphysical bus to any ground pin on Arduino
-// Connect the green wire from the pataphysical bus to Analog 5 (i2c clock) 
-// Connect the blue wire from the pataphysical bus to Analog 4 (i2c data) 
+// writeGPIO(data);
 
-Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
 
-const int box_button = 2; // the switch for the whole box may be placed on pin 12 -- it is triggered when you open the box. 
+Adafruit_MCP23008 mcp;
+
+const int buttonPin = 12;     // the number of the pushbutton pin
 int buttonState = 0;         // variable for reading the pushbutton status
 int oldbuttonState = 0;      // for button changes
-
 int songValue = 16;  // Play Track 16 (Box #16)
 int quietValue = 0;  // TRK0 means stop playing
-
-const int led = 3; // LED is on pin 3
-
-
-//********************  SETUP    **********************
-
-
+  
+ // Pataphysical Tracks List:
+ // http://bit.ly/pata-tracks-list
+ 
+  
 void setup() {  
   pinMode(buttonPin, INPUT);
-  delay(5000); //wait five seconds after powerup
+  delay(200*songValue); // waitby#
   mcp.begin();      // use default address 0, based at 0x20
 }
 
 
-//********************  MAIN LOOP    **********************
-
- 
-void loop() 
-{ 
- 
-  // First ask the server to play a sound if the button has been pressed.
-  
+void loop() {
   oldbuttonState = buttonState;
-  buttonState = digitalRead(box_button);
+  buttonState = digitalRead(buttonPin);
   // check if the pushbutton is pressed.
   // if it is, the buttonState is HIGH, nc button:
-  if (buttonState != oldbuttonState) 
-  {     
-    if (buttonState == HIGH) 
-    {     
-      
-  // Play a sound, since the button has been pressed.    
-      
-  mcp.writeGPIO(songValue);
-      
-   // Then make the three groups of LEDs blink on and off -- feel free to tweak the timing as needed 
-  
-  digitalWrite(led, HIGH);   // turn the LED on (HIGH is the voltage level)
-
-  
-   }
-    else 
-    {
-      
-    mcp.writeGPIO(quietValue);
-
-   // Then make the three groups of LEDs blink on and off -- feel free to tweak the timing as needed 
-  
-  digitalWrite(led, LOW);   // tturn the LED off by making the voltage LOW
-  delay(1000);               // wait for a second
-
-
-   }
+  if (buttonState != oldbuttonState) {     
+    if (buttonState == HIGH) {     
+//    mcp.begin();      // use default address 0, based at 0x20
+      mcp.writeGPIO(songValue);
+    }
+    else {
+      mcp.writeGPIO(quietValue);
+    }
   }
- 
   oldbuttonState = buttonState;
   delay(20);
- 
-
 }
-

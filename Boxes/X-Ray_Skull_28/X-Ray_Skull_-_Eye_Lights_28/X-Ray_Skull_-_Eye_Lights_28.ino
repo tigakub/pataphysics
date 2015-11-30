@@ -1,32 +1,23 @@
 /****************************************************
-
 Arduino code for X-Ray Skull, an interactive art "wonderbox"
 for the Pataphysical Slot Machine.
-
 This software module controls the skull's blinking eyes, 
 now using a Teensy to cycle through red, green, blue, yellow, purple, 
 by varying the intensity of red, blue, and green LEDs.
-
 A separate software module controls the skull's sound and motion, 
 using an Arduino Uno.
-
 About the Pataphysical Slot Machine:
 http://pataphysics.us
-
 Wonderbox specifications:
 http://bit.ly/wonderbox-spec
-
 Last updated on September 21, 2015.
-
 Written by Jean Bolte, with help from Donald Day and Howard Rheingold, 
 based on free libraries from Arduino, Adafruit and others. 
-
 Adapted from Adafruit Arduino-Lesson 3. RGB LED
 Diffuse RGB LED wired with common negative pin connected
 to ground, other 3 pins connected via 270 Ohm resistors to pins
 11, 10, 9--for two LEDS in synch, r and r2 are pin3 and pin6;
 g and g2 are pin4 and pin9, b and b2 are pin5 and pin10
-
 This free software is licensed under GPLv2.
   
  ****************************************************/
@@ -101,5 +92,4 @@ analogWrite(green2Pin, green);
 analogWrite(blue2Pin, blue);
 
 }
-
 
