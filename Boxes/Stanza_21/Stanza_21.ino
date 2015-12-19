@@ -12,20 +12,19 @@ http://pataphysics.us
 Wonderbox specifications:
 http://bit.ly/wonderbox-spec
 
-Last updated on November 28, 2015.
-
 Written by Ilyse Magy, with help from Justin Hall,  
 based on free libraries from Arduino, Adafruit and others. 
 Sound playback code by Donald Day and Tim Pozar.
 
 This free software is licensed under GPLv2.
-  
  ****************************************************/
 
 #include <TrueRandom.h>   //Include the TrueRandom Library
 #include <Servo.h> // for controlling servo motor
-#include <Wire.h> // to connnect with other boxes with the i2c protocol, for sound playback
-#include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
+// #include <Wire.h> // to connnect with other boxes with the i2c protocol, for sound playback
+// #include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
+#include <I2C.h>
+
 // Download the latest Adafruit_MCP23008 code here: https://github.com/adafruit/Adafruit-MCP23008-library
 
 // Connect the red wire from the pataphysical bus to the 5V pin on Arduino
@@ -33,7 +32,7 @@ This free software is licensed under GPLv2.
 // Connect the green wire from the pataphysical bus to Analog 5 (i2c clock) 
 // Connect the blue wire from the pataphysical bus to Analog 4 (i2c data) 
 
-Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
+// Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
 
 const int box_button = 3; // the switch for the whole box is placed on pin 3 -- it is triggered when you open the box. 
 int buttonState = 0;         // variable for reading the pushbutton status
@@ -53,12 +52,9 @@ int ledPin8 = 6;
 int ledPin9 = 5;
 int ledPin10 = 4;
 
-
 //********************  SETUP    **********************
-
 void setup()
 {
-  
 pinMode(box_button, INPUT);
 
 pinMode(ledPin1, OUTPUT); //Sets the LED pins as output pins.
@@ -73,16 +69,14 @@ pinMode(ledPin9, OUTPUT);
 pinMode(ledPin10, OUTPUT);
 
   delay(5000); //wait five seconds after powerup    
-  mcp.begin();      // use default address 0, based at 0x20
-
+  // mcp.begin();      // use default address 0, based at 0x20
+  I2c.begin();
 }
-
 
 //********************  MAIN LOOP    **********************
 
 void loop()
 { 
-  
   oldbuttonState = buttonState;
   buttonState = digitalRead(box_button);
   // check if the pushbutton is pressed.
@@ -90,10 +84,12 @@ void loop()
   if (buttonState != oldbuttonState) {     
     if (buttonState == HIGH) {     
 //    mcp.begin();      // use default address 0, based at 0x20
-      mcp.writeGPIO(songValue);
+//    mcp.writeGPIO(songValue);
+      I2c.write(32, 9, songValue);
     }
     else {
-      mcp.writeGPIO(quietValue);
+      // mcp.writeGPIO(quietValue);
+      I2c.write(32, 9, quietValue);
     }
   }
   oldbuttonState = buttonState;
@@ -111,6 +107,4 @@ analogWrite(ledPin8, TrueRandom.random(100,255));
 analogWrite(ledPin9, TrueRandom.random(100,255));
 analogWrite(ledPin10, TrueRandom.random(100,255));
 delay(TrueRandom.random(0,300)); //Limits the speed.
-
 }
-
