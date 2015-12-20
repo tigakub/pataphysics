@@ -56,9 +56,9 @@ void setup()
   
   // Turn on the three LEDs
   
-  digitalWrite(led_1, HIGH);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(led_2, HIGH);    // turn the LED off by making the voltage HIGH
-  digitalWrite(led_3, HIGH);    // turn the LED off by making the voltage HIGH
+//  digitalWrite(led_1, HIGH);   // turn the LED on (HIGH is the voltage level)
+//  digitalWrite(led_2, HIGH);    // turn the LED off by making the voltage HIGH
+//  digitalWrite(led_3, HIGH);    // turn the LED off by making the voltage HIGH
  
   
   delay(200*songValue); // wait a few seconds before calling the sound server    
