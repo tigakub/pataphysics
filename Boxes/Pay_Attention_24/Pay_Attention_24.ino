@@ -26,11 +26,11 @@ This free software is licensed under GPLv2.
   
 ****************************************************/
  
-#include <Wire.h>
-#include "Adafruit_MCP23008.h"
+// #include <Wire.h>
+// #include "Adafruit_MCP23008.h"
+#include <I2C.h>
 
 /* Wiring instructions:
-
 For the Arduino or Diavolino clients in each Wonderbox:
 - Connect the red wire from the pataphysical bus to the 5V pin on Arduino
 - Connect the black wire from the pataphysical bus to any ground pin on Arduino
@@ -50,8 +50,7 @@ The code below is a basic toggle test for i/o expansion. It flips pin #0 of a MC
 
 // writeGPIO(data);
 
-
-Adafruit_MCP23008 mcp;
+// Adafruit_MCP23008 mcp;
 
 const int buttonPin = 12;     // the number of the pushbutton pin
 int buttonState = 0;         // variable for reading the pushbutton status
@@ -94,63 +93,62 @@ pinMode(red2Pin, OUTPUT);
 pinMode(green2Pin, OUTPUT);
 pinMode(blue2Pin, OUTPUT); 
 
-delay(5000); //wait five seconds before calling the sound server
-mcp.begin();      // use default address 0, based at 0x20
-
+delay(200*songValue); // waitby#
+// mcp.begin();      // use default address 0, based at 0x20
+I2c.begin();
 }
 
 void loop()
 {
-  
-  
- oldbuttonState = buttonState;
+  oldbuttonState = buttonState;
   buttonState = digitalRead(buttonPin);
   // check if the pushbutton is pressed.
   // if it is, the buttonState is HIGH, nc button:
   if (buttonState != oldbuttonState) {     
     if (buttonState == HIGH) {     
-//    mcp.begin();      // use default address 0, based at 0x20
-      mcp.writeGPIO(songValue);
+      // mcp.begin();      // use default address 0, based at 0x20
+      // mcp.writeGPIO(songValue);
+      I2c.write(32, 9, songValue);
     }
     else {
-      mcp.writeGPIO(quietValue);
+      // mcp.writeGPIO(quietValue);
+      I2c.write(32, 9, quietValue);
     }
   }
   oldbuttonState = buttonState;
   delay(20);
 
-  
-int i;
-for(i = delayPeriodSlow; i >= delayPeriodFast; i = i - delayPeriodIncrement) //speed up 
-{
-flashColors(i);
-}
-for(i = delayPeriodFast; i <= delayPeriodSlow; i = i + delayPeriodIncrement) //slow down
-{
-flashColors(i);
-}
+  int i;
+  for(i = delayPeriodSlow; i >= delayPeriodFast; i = i - delayPeriodIncrement) //speed up 
+  {
+    flashColors(i);
+  }
+  for(i = delayPeriodFast; i <= delayPeriodSlow; i = i + delayPeriodIncrement) //slow down
+  {
+    flashColors(i);
+  }
 } 
-void flashColors(int delayPeriod)
 
+void flashColors(int delayPeriod)
 {
-setColor(255, 0, 0); // red
-delay(delayPeriod);
-setColor(0, 255, 0); // green
-delay(delayPeriod);
-setColor(0, 0, 255); // blue
-delay(delayPeriod);
-setColor(255, 255, 0); // yellow
-delay(delayPeriod); 
-setColor(80, 0, 80); // purple
-delay(delayPeriod);
+  setColor(255, 0, 0); // red
+  delay(delayPeriod);
+  setColor(0, 255, 0); // green
+  delay(delayPeriod);
+  setColor(0, 0, 255); // blue
+  delay(delayPeriod);
+  setColor(255, 255, 0); // yellow
+  delay(delayPeriod); 
+  setColor(80, 0, 80); // purple
+  delay(delayPeriod);
 }
 
 void setColor(int red, int green, int blue)
 {
-analogWrite(redPin, red);
-analogWrite(greenPin, green);
-analogWrite(bluePin, blue); 
-analogWrite(red2Pin, red);
-analogWrite(green2Pin, green);
-analogWrite(blue2Pin, blue); 
+  analogWrite(redPin, red);
+  analogWrite(greenPin, green);
+  analogWrite(bluePin, blue); 
+  analogWrite(red2Pin, red);
+  analogWrite(green2Pin, green);
+  analogWrite(blue2Pin, blue); 
 }
