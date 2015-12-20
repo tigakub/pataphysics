@@ -55,7 +55,7 @@ The code below is a basic toggle test for i/o expansion. It flips pin #0 of a MC
 const int buttonPin = 12;     // the number of the pushbutton pin
 int buttonState = 0;         // variable for reading the pushbutton status
 int oldbuttonState = 0;      // for button changes
-int songValue = 27;  // Play Track 27 (Box #27)
+int songValue = 24;  // Play Track 24 (Box #24)
 int quietValue = 0;  // TRK0 means stop playing
 
 
