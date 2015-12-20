@@ -68,7 +68,7 @@ pinMode(ledPin8, OUTPUT);
 pinMode(ledPin9, OUTPUT);
 pinMode(ledPin10, OUTPUT);
 
-  delay(5000); //wait five seconds after powerup    
+  delay(200*songValue); //waitby#    
   // mcp.begin();      // use default address 0, based at 0x20
   I2c.begin();
 }
