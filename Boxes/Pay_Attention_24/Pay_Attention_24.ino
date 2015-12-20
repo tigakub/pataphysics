@@ -70,6 +70,7 @@ to ground, other 3 pins connected via 270 Ohm resistors to pins
 11, 10, 9 -- for two LEDS in synch, r and r2 are pin3 and pin6;
 g and g2 are pin4 and pin9, b and b2 are pin5 and pin10 */
 
+int i;
 int redPin = 3;
 int greenPin = 4;
 int bluePin = 5;
@@ -118,7 +119,8 @@ void loop()
   oldbuttonState = buttonState;
   delay(20);
 
-  int i;
+// this section could slow button sensing WAY down, by 2 * 5 * ((250+240+230...30)+(25+35+45...245)) ms
+// need to re-write with millis()
   for(i = delayPeriodSlow; i >= delayPeriodFast; i = i - delayPeriodIncrement) //speed up 
   {
     flashColors(i);
