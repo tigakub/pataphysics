@@ -14,7 +14,7 @@ https://github.com/fabriceflorin/pataphysics
 About the Pataphysical Slot Machine:
 http://pataphysics.us
 
-Last updated on December 21, 2015.
+Last updated on December 23, 2015.
 
 Written by Donald Day and Tim Pozar, based on free libraries from Arduino and Adafruit. 
 
@@ -60,12 +60,13 @@ to ground, other 3 pins connected via 270 Ohm resistors to pins
 11, 10, 9 -- for two LEDS in synch, r and r2 are pin3 and pin6;
 g and g2 are pin4 and pin9, b and b2 are pin5 and pin10 */
 
+// pins below didn't match PWM pins above, so changing them 12/23 dd
 int redPin = 3;
-int greenPin = 4;
-int bluePin = 5;
-int red2Pin = 6;
-int green2Pin = 9;
-int blue2Pin = 10;
+int greenPin = 5;
+int bluePin = 6;
+int red2Pin = 9;
+int green2Pin = 10;
+int blue2Pin = 11;
 int delayPeriodSlow = 250 ; // just example values lower value is faster
 // original value set to 250
 int delayPeriodFast = 25;
@@ -93,7 +94,7 @@ I2c.begin();
 
 void loop()
 {
-  oldbuttonState = buttonState;
+//  oldbuttonState = buttonState; don't need to do this twice 12/23 dd
   buttonState = digitalRead(buttonPin);
   // check if the pushbutton is pressed.
   // if it is, the buttonState is HIGH, nc button:
@@ -106,7 +107,7 @@ void loop()
     }
   }
   oldbuttonState = buttonState;
-  delay(20);
+  delay(2);  // probably enough delay in flash colors - change to 2  - 12/23 dd
 
   flashColors(i);
 }
