@@ -1,5 +1,4 @@
 /****************************************************
-
 Arduino code for the 'Mother of Yes' wonderbox, an interactive artwork
 for the Pataphysical Slot Machine.
 
@@ -18,11 +17,11 @@ Written by Fabrice Florin, based on free libraries from Arduino, Adafruit and ot
 Sound playback code by Donald Day and Tim Pozar.
 
 This free software is licensed under GPLv2.
-  
 ****************************************************/
- 
-#include <Wire.h>
-#include "Adafruit_MCP23008.h"
+
+// #include <Wire.h>
+// #include "Adafruit_MCP23008.h"
+#include <I2C.h>
 
 /* Wiring instructions:
 For the Arduino or Diavolino clients in each Wonderbox:
@@ -41,26 +40,23 @@ The code below is a basic toggle test for i/o expansion. It flips pin #0 of a MC
 */
 
 // writeGPIO(data);
-
-
-Adafruit_MCP23008 mcp;
+// Adafruit_MCP23008 mcp;
 
 const int buttonPin = 12;     // the number of the pushbutton pin
 int buttonState = 0;         // variable for reading the pushbutton status
 int oldbuttonState = 0;      // for button changes
 int songValue = 16;  // Play Track 16 (Box #16)
 int quietValue = 0;  // TRK0 means stop playing
-  
+
  // Pataphysical Tracks List:
  // http://bit.ly/pata-tracks-list
- 
   
 void setup() {  
   pinMode(buttonPin, INPUT);
   delay(200*songValue); // waitby#
-  mcp.begin();      // use default address 0, based at 0x20
+  // mcp.begin();      // use default address 0, based at 0x20
+  I2c.begin();
 }
-
 
 void loop() {
   oldbuttonState = buttonState;
@@ -69,11 +65,13 @@ void loop() {
   // if it is, the buttonState is HIGH, nc button:
   if (buttonState != oldbuttonState) {     
     if (buttonState == HIGH) {     
-//    mcp.begin();      // use default address 0, based at 0x20
-      mcp.writeGPIO(songValue);
+      // mcp.begin();      // use default address 0, based at 0x20
+      // mcp.writeGPIO(songValue);
+      I2c.write(32, 9, songValue);
     }
     else {
-      mcp.writeGPIO(quietValue);
+      // mcp.writeGPIO(quietValue);
+      I2c.write(32, 9, quietValue);
     }
   }
   oldbuttonState = buttonState;
