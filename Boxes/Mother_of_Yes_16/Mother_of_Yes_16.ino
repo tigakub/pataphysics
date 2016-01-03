@@ -52,15 +52,19 @@ int quietValue = 0;  // TRK0 means stop playing
  // http://bit.ly/pata-tracks-list
   
 void setup() {  
+  Serial.begin(9600);
+  Serial.println("Start of setup.");
   pinMode(buttonPin, INPUT);
   delay(200*songValue); // waitby#
   // mcp.begin();      // use default address 0, based at 0x20
   I2c.begin();
+  Serial.println("End of setup.");
 }
 
 void loop() {
   oldbuttonState = buttonState;
   buttonState = digitalRead(buttonPin);
+  Serial.println(buttonState);
   // check if the pushbutton is pressed.
   // if it is, the buttonState is HIGH, nc button:
   if (buttonState != oldbuttonState) {     
@@ -68,12 +72,14 @@ void loop() {
       // mcp.begin();      // use default address 0, based at 0x20
       // mcp.writeGPIO(songValue);
       I2c.write(32, 9, songValue);
+      Serial.println("Door is open.");
     }
     else {
       // mcp.writeGPIO(quietValue);
       I2c.write(32, 9, quietValue);
+      Serial.println("Door is closed.");
     }
   }
-  oldbuttonState = buttonState;
   delay(20);
+  oldbuttonState = buttonState;
 }
