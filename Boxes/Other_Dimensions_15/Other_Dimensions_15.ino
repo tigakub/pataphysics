@@ -16,7 +16,6 @@ https://github.com/adafruit/Adafruit-MCP23008-library
 Last updated on November 28, 2015.
 Written by Donald Day, Fabrice Florin and Tim Pozar, based on free libraries from Arduino and Adafruit. 
 This free software is licensed under GPLv2.
-  
 ****************************************************/
  
 #include <Wire.h>
@@ -40,7 +39,6 @@ The code below is a basic toggle test for i/o expansion. It flips pin #0 of a MC
 
 // writeGPIO(data);
 
-
 Adafruit_MCP23008 mcp;
 
 const int buttonPin = 12;     // the number of the pushbutton pin
@@ -49,20 +47,16 @@ int oldbuttonState = 0;      // for button changes
 int songValue = 15;  // Play Track 15 (Box #15)
 int quietValue = 0;  // TRK0 means stop playing
   
-  
  // Pataphysical Tracks List:
  // http://bit.ly/pata-tracks-list
- 
-  
+
 void setup() {  
   pinMode(buttonPin, INPUT);
   delay(5000); //wait five seconds after powerup
   mcp.begin();      // use default address 0, based at 0x20
 }
 
-
 void loop() {
-  
   oldbuttonState = buttonState;
   buttonState = digitalRead(buttonPin);
   // check if the pushbutton is pressed.
@@ -78,7 +72,4 @@ void loop() {
   }
   oldbuttonState = buttonState;
   delay(20);
-  
-  
-  
 }
