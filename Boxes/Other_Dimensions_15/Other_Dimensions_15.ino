@@ -18,8 +18,9 @@ Written by Donald Day, Fabrice Florin and Tim Pozar, based on free libraries fro
 This free software is licensed under GPLv2.
 ****************************************************/
  
-#include <Wire.h>
-#include "Adafruit_MCP23008.h"
+// #include <Wire.h>
+// #include "Adafruit_MCP23008.h"
+#include <I2C.h>
 
 /* Wiring instructions:
 For the Arduino or Diavolino clients in each Wonderbox:
@@ -38,8 +39,7 @@ The code below is a basic toggle test for i/o expansion. It flips pin #0 of a MC
 */
 
 // writeGPIO(data);
-
-Adafruit_MCP23008 mcp;
+// Adafruit_MCP23008 mcp;
 
 const int buttonPin = 12;     // the number of the pushbutton pin
 int buttonState = 0;         // variable for reading the pushbutton status
@@ -53,7 +53,8 @@ int quietValue = 0;  // TRK0 means stop playing
 void setup() {  
   pinMode(buttonPin, INPUT);
   delay(5000); //wait five seconds after powerup
-  mcp.begin();      // use default address 0, based at 0x20
+  // mcp.begin();      // use default address 0, based at 0x20
+  I2c.begin();
 }
 
 void loop() {
@@ -64,10 +65,12 @@ void loop() {
   if (buttonState != oldbuttonState) {     
     if (buttonState == HIGH) {     
 //    mcp.begin();      // use default address 0, based at 0x20
-      mcp.writeGPIO(songValue);
+//    mcp.writeGPIO(songValue);
+      I2c.write(32, 9, songValue);
     }
     else {
-      mcp.writeGPIO(quietValue);
+      // mcp.writeGPIO(quietValue);
+      I2c.write(32, 9, quietValue);
     }
   }
   oldbuttonState = buttonState;
