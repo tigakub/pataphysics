@@ -14,8 +14,10 @@ This free software is licensed under GPLv2.
   
  ****************************************************/
  
-#include <Wire.h> // to connnect with other boxes with the i2c protocol, for sound playback
-#include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
+// #include <Wire.h> // to connnect with other boxes with the i2c protocol, for sound playback
+// #include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
+#include <I2C.h>
+
 // Download the latest Adafruit_MCP23008 code here: https://github.com/adafruit/Adafruit-MCP23008-library
 
 // Connect the red wire from the pataphysical bus to the 5V pin on Arduino
@@ -23,9 +25,9 @@ This free software is licensed under GPLv2.
 // Connect the green wire from the pataphysical bus to Analog 5 (i2c clock) 
 // Connect the blue wire from the pataphysical bus to Analog 4 (i2c data) 
 
-Adafruit_MCP23008 mcp;     // instantiate Adafruit_MCP23008 mcp
+// Adafruit_MCP23008 mcp;     // instantiate Adafruit_MCP23008 mcp
 
-const int box_button = 12; // the switch for the whole box may be placed on pin 12 
+const int buttonPin = 12; // the switch for the whole box may be placed on pin 12 
                            // -- it is triggered when you open the box and sees "HIGH"
 int buttonState = 0;       // variable for reading the pushbutton status
 int oldbuttonState = 0;    // for button changes
@@ -46,7 +48,6 @@ int led13 = 13;
 
 void setup() {  
   pinMode(buttonPin, INPUT);
-  
   pinMode(led1, OUTPUT);
   pinMode(led2, OUTPUT);
   pinMode(led2, OUTPUT); 
@@ -58,28 +59,30 @@ void setup() {
   pinMode(led13, OUTPUT); // Pin 13 is the one on the board so we can see what is happening from that side of the box.
   
   delay(5000); //wait five seconds after powerup
-  mcp.begin();      // use default address 0, based at 0x20
+  // mcp.begin();      // use default address 0, based at 0x20
+  I2c.begin();
 }
 
 //********************  MAIN LOOP    **********************
 
 void loop() 
 { 
- 
-    // First ask the server to play a sound if the button has been pressed.
+  // First ask the server to play a sound if the button has been pressed.
   oldbuttonState = buttonState;
-  buttonState = digitalRead(box_button);
+  buttonState = digitalRead(buttonPin);
   // check if the pushbutton is pressed.
   // if it is, the buttonState is HIGH, nc button:
   if (buttonState != oldbuttonState) 
   {     
     if (buttonState == HIGH) 
     {     
-      mcp.writeGPIO(songValue);
+      // mcp.writeGPIO(songValue);
+      I2c.write(32, 9, songValue);
     }
     else 
     {
-      mcp.writeGPIO(quietValue);
+      // mcp.writeGPIO(quietValue);
+      I2c.write(32, 9, quietValue);
     }
   }
   oldbuttonState = buttonState;
@@ -103,7 +106,7 @@ void loop()
   digitalWrite(led5, LOW);    // turn the LED off by making the voltage LOW
   digitalWrite(led6, LOW);    // turn the LED off by making the voltage LOW
   digitalWrite(led7, LOW);    // turn the LED off by making the voltage LOW
-  digitalWrite(led13, LOW);    // turn the LED off by making the voltage LOW
+  digitalWrite(led13, LOW);   // turn the LED off by making the voltage LOW
   delay(1500);                // wait for a second
   } 
   else   //  Door is closed.  Turn off the lights...
@@ -116,5 +119,5 @@ void loop()
   digitalWrite(led6, LOW);    // turn the LED off by making the voltage LOW
   digitalWrite(led7, LOW);    // turn the LED off by making the voltage LOW
   digitalWrite(led13, LOW);    // turn the LED off by making the voltage LOW
-}
+  }
 }
