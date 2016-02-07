@@ -15,7 +15,7 @@ http://bit.ly/wonderbox-schema
 About the Pataphysical Slot Machine:
 http://pataphysics.us
 
-Last updated on September 30, 2015.
+Last updated on February 6, 2015.
 
 Written by Fabrice Florin, based on free libraries from Arduino and Adafruit. 
 Sound playback code by Donald Day and Tim Pozar.
@@ -25,16 +25,13 @@ This free software is licensed under GPLv2.
  ****************************************************/
  
 #include <Servo.h> // for controlling servo motors
-#include <Wire.h> // to connnect with other boxes with the i2c protocol, for sound playback
-#include "Adafruit_MCP23008.h" // to connnect with the i2c expander, for sound playback
-// Download the latest Adafruit_MCP23008 code here: https://github.com/adafruit/Adafruit-MCP23008-library
+// #include <Wire.h> // to connnect with other boxes with the i2c protocol, for sound playback
+#include <I2C.h>
 
 // Connect the red wire from the pataphysical bus to the 5V pin on Arduino
 // Connect the black wire from the pataphysical bus to any ground pin on Arduino
 // Connect the green wire from the pataphysical bus to Analog 5 (i2c clock) 
 // Connect the blue wire from the pataphysical bus to Analog 4 (i2c data) 
-
-Adafruit_MCP23008 mcp; // instantiate Adafruit_MCP23008 mcp
 
 const int box_button = 2; // the switch for the whole box is on pin 2 -- it is triggered when you open the box 
 const int temple_outside_light_left = 3; // temple left light LED is on pin 3
@@ -116,9 +113,10 @@ Serial.print("Setup Garuda state: ");
 Serial.println(garudaState);
 
 Serial.println(" ");
-    
-  delay(5000); //wait five seconds after powerup
-  mcp.begin();      // use default address 0, based at 0x20
+ 
+ // Setup Sound Server (i2c)
+   delay(200*songValue); // wait a few seconds to call the sound server
+  I2c.begin();   
     
 } 
 
@@ -340,7 +338,8 @@ void playSound() // PLAY SOUND: This will play a sound, if all goes well, using 
 
   {
   
-mcp.writeGPIO(songValue);
+    I2c.write(32, 9, songValue);
+
  // Play track 12, using the songValue variable. 
  // The file name is actually 'TRK12.MP3', but we're only sending the song value '12'.
  // The sound server will fill in 'TRK' and '.mp3' for us.
@@ -358,9 +357,9 @@ void stopSound() // STOP SOUND
 
   {
   
-mcp.writeGPIO(quietValue);
- // Play track 0, using the quietValue variable. 
- // The file name is actually 'TRK0.MP3', but we're only sending the song value '0'.
+  I2c.write(32, 9, quietValue);
+  // Play track 0, using the quietValue variable. 
+  // The file name is actually 'TRK0.MP3', but we're only sending the song value '0'.
  
   Serial.print("We are now stopping the sound.");
   Serial.println(" ");
